@@ -1,0 +1,91 @@
+specification: FinOps Framework
+specificationVersion: '1.0'
+schema: https://www.finops.org/framework/
+provider: EZRentOut
+providerId: ezrentout
+created: '2026-07-03'
+modified: '2026-07-03'
+reconciled: false
+tags:
+- Equipment Rental
+- Rental Management
+- EZO
+- FinOps
+- Cost Management
+- FOCUS
+description: >-
+  FinOps view of EZRentOut spend. EZRentOut (by EZO) is a subscription SaaS
+  product billed as a tiered monthly plan (Essential, Growth, Premium,
+  Enterprise), typically billed annually, priced by tier and user seats rather
+  than by API consumption. The REST API carries no separate per-call charge - it
+  is a Fair Use benefit of a paid subscription. The dominant cost drivers are the
+  subscription tier and the number of member seats, plus any add-ons and
+  enterprise terms. API spend is therefore effectively a fixed subscription cost,
+  not a usage meter, so cost optimization focuses on right-sizing the plan tier
+  and seat count.
+notes: >-
+  Per-tier list prices are approximate and unreconciled; confirm on the
+  EZRentOut pricing page. There is no metered API line item to allocate - model
+  API cost as a share of the platform subscription. Watch for seat growth and
+  tier upgrades as the real cost levers.
+sources:
+- https://ezo.io/ezrentout/pricing/
+- https://ezo.io/ezrentout/developers/
+- https://focus.finops.org/focus-specification/v1-3/
+alignedWith:
+  framework: FinOps Foundation Framework
+  frameworkUrl: https://www.finops.org/framework/
+  dataSpec: FOCUS
+  dataSpecVersion: '1.3'
+  dataSpecUrl: https://focus.finops.org/focus-specification/v1-3/
+publisherName: EZO
+serviceCategory: Business Application Software (Rental Management)
+billingModel:
+  pricingCategory: Subscription
+  billingFrequency: Annual
+  billingCurrency: USD
+  chargeCategories:
+  - Purchase
+  - Usage
+  - Adjustment
+focusColumns:
+  ServiceName: EZRentOut
+  ServiceCategory: Business Applications
+  ProviderName: EZO
+  PublisherName: EZO
+  InvoiceIssuerName: EZO
+  BillingCurrency: USD
+  ChargeCategory: Purchase
+  PricingCategory: Subscription
+meters:
+- name: subscription_tier
+  description: The EZRentOut plan tier (Essential, Growth, Premium, Enterprise) - the primary cost driver.
+  unit: subscription
+  aggregation: max
+  dimensions:
+  - account
+  - plan
+- name: member_seats
+  description: Number of member (user) seats on the account; higher tiers and extra seats increase cost.
+  unit: seats
+  aggregation: max
+  dimensions:
+  - account
+- name: api_requests
+  description: API requests under Fair Use; informational only - not separately billed, but signals whether a higher tier is warranted.
+  unit: requests
+  aggregation: sum
+  dimensions:
+  - account
+principles:
+- name: Visibility
+  description: Track the subscription tier, seat count, and (informationally) API request volume so integration teams can see what drives the invoice.
+- name: Allocation
+  description: Attribute the EZRentOut subscription to the rental operations cost center; if multiple teams share it, split by member seats.
+- name: Optimization
+  description: Right-size the plan tier and member seat count to actual usage; paginate and cache API reads to stay within Fair Use rather than needing a higher tier.
+- name: Accountability
+  description: Assign an owner for the EZRentOut subscription who reviews tier, seats, and renewal terms each cycle.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

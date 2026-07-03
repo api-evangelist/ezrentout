@@ -1,0 +1,362 @@
+{
+  "info": {
+    "name": "EZRentOut API",
+    "description": "REST API for EZRentOut (by EZO), the cloud equipment rental management platform. Requests are scoped to your own {{subdomain}}.ezrentout.com tenant and authenticated with a per-company access token sent in the `token` header over HTTPS. Endpoints are namespaced with a .api suffix; list endpoints are paginated via the page query parameter. Paths are grounded in the EZRentOut developer docs; bodies are illustrative.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      { "key": "key", "value": "token", "type": "string" },
+      { "key": "value", "value": "{{accessToken}}", "type": "string" },
+      { "key": "in", "value": "header", "type": "string" }
+    ]
+  },
+  "variable": [
+    { "key": "subdomain", "value": "your-company" },
+    { "key": "baseUrl", "value": "https://{{subdomain}}.ezrentout.com" },
+    { "key": "accessToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "List orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/baskets.api?page=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["baskets.api"],
+              "query": [{ "key": "page", "value": "1" }]
+            },
+            "description": "Retrieves all orders (baskets)."
+          }
+        },
+        {
+          "name": "Create an order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"customer_id\": 0,\n  \"starts_on\": \"01/01/2026\",\n  \"ends_on\": \"01/07/2026\"\n}" },
+            "url": { "raw": "{{baseUrl}}/baskets.api", "host": ["{{baseUrl}}"], "path": ["baskets.api"] },
+            "description": "Creates a new draft order (basket)."
+          }
+        },
+        {
+          "name": "Get order details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/baskets/:orderNum.api", "host": ["{{baseUrl}}"], "path": ["baskets", ":orderNum.api"], "variable": [{ "key": "orderNum", "value": "" }] },
+            "description": "Retrieves the details of a single order."
+          }
+        },
+        {
+          "name": "Add items to an order",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/baskets/:orderNum/update_basket_from_show.api", "host": ["{{baseUrl}}"], "path": ["baskets", ":orderNum", "update_basket_from_show.api"], "variable": [{ "key": "orderNum", "value": "" }] },
+            "description": "Adds assets, inventory, stock, or coupons to a draft order."
+          }
+        },
+        {
+          "name": "Reserve an order",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/baskets/:orderNum/reservation.api", "host": ["{{baseUrl}}"], "path": ["baskets", ":orderNum", "reservation.api"], "variable": [{ "key": "orderNum", "value": "" }] },
+            "description": "Books (reserves) an order."
+          }
+        },
+        {
+          "name": "Check out (rent out) an order",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/baskets/:orderNum/checkout.api", "host": ["{{baseUrl}}"], "path": ["baskets", ":orderNum", "checkout.api"], "variable": [{ "key": "orderNum", "value": "" }] },
+            "description": "Rents out (checks out) a reserved order."
+          }
+        },
+        {
+          "name": "Check in (return) an order",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/baskets/:orderNum/checkin.api", "host": ["{{baseUrl}}"], "path": ["baskets", ":orderNum", "checkin.api"], "variable": [{ "key": "orderNum", "value": "" }] },
+            "description": "Returns (checks in) a rented-out order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assets",
+      "item": [
+        {
+          "name": "List assets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/assets.api?page=1", "host": ["{{baseUrl}}"], "path": ["assets.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Retrieves fixed (rentable) assets."
+          }
+        },
+        {
+          "name": "Create an asset",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"group_id\": 0,\n  \"location_id\": 0\n}" },
+            "url": { "raw": "{{baseUrl}}/assets.api", "host": ["{{baseUrl}}"], "path": ["assets.api"] },
+            "description": "Creates a new fixed asset."
+          }
+        },
+        {
+          "name": "Get asset details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/assets/:assetNum.api", "host": ["{{baseUrl}}"], "path": ["assets", ":assetNum.api"], "variable": [{ "key": "assetNum", "value": "" }] },
+            "description": "Retrieves a single asset."
+          }
+        },
+        {
+          "name": "Update asset GPS coordinates",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"latitude\": 0,\n  \"longitude\": 0\n}" },
+            "url": { "raw": "{{baseUrl}}/assets/:assetNum/gps_coordinates.api", "host": ["{{baseUrl}}"], "path": ["assets", ":assetNum", "gps_coordinates.api"], "variable": [{ "key": "assetNum", "value": "" }] },
+            "description": "Updates an asset's GPS coordinates for location tracking."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "List inventory",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/inventory.api?page=1", "host": ["{{baseUrl}}"], "path": ["inventory.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Retrieves inventory (volatile) items."
+          }
+        },
+        {
+          "name": "Create an inventory item",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"group_id\": 0\n}" },
+            "url": { "raw": "{{baseUrl}}/inventory.api", "host": ["{{baseUrl}}"], "path": ["inventory.api"] },
+            "description": "Creates a new inventory item."
+          }
+        },
+        {
+          "name": "Transfer inventory stock",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"from_location_id\": 0,\n  \"to_location_id\": 0,\n  \"quantity\": 0\n}" },
+            "url": { "raw": "{{baseUrl}}/inventory/:assetNum/transfer_stock.api", "host": ["{{baseUrl}}"], "path": ["inventory", ":assetNum", "transfer_stock.api"], "variable": [{ "key": "assetNum", "value": "" }] },
+            "description": "Transfers inventory stock between locations."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bundles",
+      "item": [
+        {
+          "name": "List bundles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/bundles.api?page=1", "host": ["{{baseUrl}}"], "path": ["bundles.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Retrieves bundles (kits of assets and inventory)."
+          }
+        },
+        {
+          "name": "Get bundle details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/bundles/:bundleId.api", "host": ["{{baseUrl}}"], "path": ["bundles", ":bundleId.api"], "variable": [{ "key": "bundleId", "value": "" }] },
+            "description": "Retrieves a single bundle."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "List customers",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/customers.api?page=1", "host": ["{{baseUrl}}"], "path": ["customers.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Retrieves customers."
+          }
+        },
+        {
+          "name": "Create a customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"\",\n  \"email\": \"\"\n}" },
+            "url": { "raw": "{{baseUrl}}/customers.api", "host": ["{{baseUrl}}"], "path": ["customers.api"] },
+            "description": "Creates a new customer."
+          }
+        },
+        {
+          "name": "Get customer details",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/customers/:customerId.api", "host": ["{{baseUrl}}"], "path": ["customers", ":customerId.api"], "variable": [{ "key": "customerId", "value": "" }] },
+            "description": "Retrieves a single customer."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "List members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/members.api?page=1", "host": ["{{baseUrl}}"], "path": ["members.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Retrieves members (staff users)."
+          }
+        },
+        {
+          "name": "Get member checked-out items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/members/:userId/checked_out_items.api", "host": ["{{baseUrl}}"], "path": ["members", ":userId", "checked_out_items.api"], "variable": [{ "key": "userId", "value": "" }] },
+            "description": "Lists the items a member currently has checked out."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Locations",
+      "item": [
+        {
+          "name": "List locations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/locations.api?page=1", "host": ["{{baseUrl}}"], "path": ["locations.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Retrieves locations (warehouses / branches)."
+          }
+        },
+        {
+          "name": "Get quantity by location",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/locations/get_quantity_by_location.api", "host": ["{{baseUrl}}"], "path": ["locations", "get_quantity_by_location.api"] },
+            "description": "Returns item quantity broken down by location."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Availability",
+      "item": [
+        {
+          "name": "Get asset booked dates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/assets/:assetNum/booked_dates.api", "host": ["{{baseUrl}}"], "path": ["assets", ":assetNum", "booked_dates.api"], "variable": [{ "key": "assetNum", "value": "" }] },
+            "description": "Returns reserved (booked) date ranges for an asset."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "List payment options",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/payment_options.api", "host": ["{{baseUrl}}"], "path": ["payment_options.api"] },
+            "description": "Lists available payment options."
+          }
+        },
+        {
+          "name": "Charge a payment against an order",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"amount\": 0,\n  \"payment_option_id\": 0\n}" },
+            "url": { "raw": "{{baseUrl}}/baskets/:orderNum/charge_pre_payment.api", "host": ["{{baseUrl}}"], "path": ["baskets", ":orderNum", "charge_pre_payment.api"], "variable": [{ "key": "orderNum", "value": "" }] },
+            "description": "Charges a payment against an order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Purchase Orders",
+      "item": [
+        {
+          "name": "List purchase orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/purchase_orders.api?page=1", "host": ["{{baseUrl}}"], "path": ["purchase_orders.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Retrieves purchase orders."
+          }
+        },
+        {
+          "name": "Receive items against a PO",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/purchase_orders/:poId/receive_items.api", "host": ["{{baseUrl}}"], "path": ["purchase_orders", ":poId", "receive_items.api"], "variable": [{ "key": "poId", "value": "" }] },
+            "description": "Receives items against a purchase order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Maintenance",
+      "item": [
+        {
+          "name": "List services",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/services.api?page=1", "host": ["{{baseUrl}}"], "path": ["services.api"], "query": [{ "key": "page", "value": "1" }] },
+            "description": "Lists assets currently in service."
+          }
+        },
+        {
+          "name": "Create a work order",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{baseUrl}}/tasks.api", "host": ["{{baseUrl}}"], "path": ["tasks.api"] },
+            "description": "Creates a work order (task)."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,159 @@
+aid: ezrentout
+name: EZRentOut
+review:
+  question: Does EZRentOut expose a documented public WebSocket API?
+  answer: false
+  date: '2026-07-03'
+  reviewer: API Evangelist
+  asyncapiSpecCreated: false
+  asyncapiScopeNote: |
+    No AsyncAPI document was authored. EZRentOut's public API is a
+    request/response REST API over HTTPS - resource endpoints namespaced with a
+    .api suffix on the customer's own {subdomain}.ezrentout.com tenant,
+    authenticated with a per-company access token in a token header. There is no
+    documented server-push transport (WebSocket or Server-Sent Events) on
+    EZRentOut's API to model. EZRentOut's developer documentation also does not
+    document a public webhooks / callback surface as of the review date; event
+    notifications, where they exist, are handled inside the product UI (alerts,
+    notifications) rather than through a documented outbound event API.
+findings:
+  summary: |
+    EZRentOut does not publish a documented public WebSocket API. EZRentOut is
+    cloud equipment rental management software from EZO (the company behind
+    EZOfficeInventory). Its API is a REST API made available to paying customers
+    for custom integrations, subject to a Fair Use policy. Requests are scoped to
+    the customer's own tenant at https://{subdomain}.ezrentout.com, use endpoints
+    suffixed with .api, and are authenticated with a per-company access token
+    sent in a `token` HTTP header over HTTPS (API is disabled by default and must
+    be enabled by the account owner in Settings). All interactions are
+    client-initiated request/response - list, create, update, delete, and action
+    endpoints for orders (baskets), assets, inventory and stock, bundles,
+    customers, members, locations, availability, payments/taxes, purchase orders,
+    and maintenance/work orders. No realtime, bidirectional, or streaming
+    WebSocket (ws:// or wss://) endpoint is documented anywhere on EZRentOut's
+    API.
+  openSource: |
+    EZRentOut is a closed-source, proprietary SaaS product. There is no public
+    open-source client, SDK, or self-hostable core published under an EZO or
+    EZRentOut GitHub organization that could be confirmed at review time.
+    Integration is via the documented REST API only.
+  transports:
+    - protocol: REST
+      scheme: https
+      baseURL: https://{subdomain}.ezrentout.com
+      documented: true
+      note: Per-company REST API. Endpoints suffixed with .api; token header auth; paginated via page.
+    - protocol: Webhook
+      scheme: https
+      documented: false
+      note: No documented public outbound webhook / callback API on EZRentOut as of the review date.
+    - protocol: WebSocket
+      scheme: wss
+      documented: false
+      note: No WebSocket endpoint is documented anywhere in EZRentOut's developer documentation.
+  endpointsConfirmedRest:
+    - GET    https://{subdomain}.ezrentout.com/baskets.api
+    - POST   https://{subdomain}.ezrentout.com/baskets.api
+    - GET    https://{subdomain}.ezrentout.com/baskets/{orderNum}.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}.api
+    - GET    https://{subdomain}.ezrentout.com/baskets/{orderNum}/history.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/update_basket_from_show.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/reservation.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/cancel_reservation.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/checkout.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/checkin.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/charge_pre_payment.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/charge_damages.api
+    - PATCH  https://{subdomain}.ezrentout.com/baskets/{orderNum}/apply_taxes.api
+    - GET    https://{subdomain}.ezrentout.com/payment_options.api
+    - GET    https://{subdomain}.ezrentout.com/pricing_coupons.api
+    - GET    https://{subdomain}.ezrentout.com/assets.api
+    - POST   https://{subdomain}.ezrentout.com/assets.api
+    - GET    https://{subdomain}.ezrentout.com/assets/filter.api
+    - GET    https://{subdomain}.ezrentout.com/assets/{assetNum}.api
+    - PUT    https://{subdomain}.ezrentout.com/assets/{assetNum}.api
+    - DELETE https://{subdomain}.ezrentout.com/assets/{assetNum}.api
+    - PATCH  https://{subdomain}.ezrentout.com/assets/{assetNum}/gps_coordinates.api
+    - PUT    https://{subdomain}.ezrentout.com/assets/{assetNum}/retire.api
+    - GET    https://{subdomain}.ezrentout.com/assets/{assetNum}/booked_dates.api
+    - GET    https://{subdomain}.ezrentout.com/search.api
+    - GET    https://{subdomain}.ezrentout.com/inventory.api
+    - POST   https://{subdomain}.ezrentout.com/inventory.api
+    - GET    https://{subdomain}.ezrentout.com/inventory/{assetNum}.api
+    - PUT    https://{subdomain}.ezrentout.com/inventory/{assetNum}.api
+    - DELETE https://{subdomain}.ezrentout.com/inventory/{assetNum}.api
+    - POST   https://{subdomain}.ezrentout.com/inventory/{assetNum}/transfer_stock.api
+    - GET    https://{subdomain}.ezrentout.com/inventory/{assetNum}/booked_dates.api
+    - GET    https://{subdomain}.ezrentout.com/stock_assets.api
+    - POST   https://{subdomain}.ezrentout.com/stock_assets.api
+    - GET    https://{subdomain}.ezrentout.com/bundles.api
+    - POST   https://{subdomain}.ezrentout.com/bundles.api
+    - GET    https://{subdomain}.ezrentout.com/bundles/{bundleId}.api
+    - GET    https://{subdomain}.ezrentout.com/customers.api
+    - POST   https://{subdomain}.ezrentout.com/customers.api
+    - GET    https://{subdomain}.ezrentout.com/customers/{customerId}.api
+    - PATCH  https://{subdomain}.ezrentout.com/customers/{customerId}.api
+    - DELETE https://{subdomain}.ezrentout.com/customers/{customerId}.api
+    - GET    https://{subdomain}.ezrentout.com/businesses.api
+    - POST   https://{subdomain}.ezrentout.com/businesses.api
+    - GET    https://{subdomain}.ezrentout.com/contacts.api
+    - POST   https://{subdomain}.ezrentout.com/contacts.api
+    - GET    https://{subdomain}.ezrentout.com/members.api
+    - POST   https://{subdomain}.ezrentout.com/members.api
+    - GET    https://{subdomain}.ezrentout.com/members/{userId}.api
+    - PATCH  https://{subdomain}.ezrentout.com/members/{userId}.api
+    - GET    https://{subdomain}.ezrentout.com/members/{userId}/checked_out_items.api
+    - GET    https://{subdomain}.ezrentout.com/locations.api
+    - POST   https://{subdomain}.ezrentout.com/locations.api
+    - GET    https://{subdomain}.ezrentout.com/locations/{locationId}.api
+    - PATCH  https://{subdomain}.ezrentout.com/locations/{locationId}.api
+    - GET    https://{subdomain}.ezrentout.com/locations/get_quantity_by_location.api
+    - GET    https://{subdomain}.ezrentout.com/purchase_orders.api
+    - POST   https://{subdomain}.ezrentout.com/purchase_orders.api
+    - GET    https://{subdomain}.ezrentout.com/purchase_orders/{poId}.api
+    - PATCH  https://{subdomain}.ezrentout.com/purchase_orders/{poId}.api
+    - PATCH  https://{subdomain}.ezrentout.com/purchase_orders/{poId}/receive_items.api
+    - GET    https://{subdomain}.ezrentout.com/vendors.api
+    - POST   https://{subdomain}.ezrentout.com/vendors.api
+    - GET    https://{subdomain}.ezrentout.com/services.api
+    - POST   https://{subdomain}.ezrentout.com/services.api
+    - PATCH  https://{subdomain}.ezrentout.com/services/{serviceId}/complete.api
+    - PATCH  https://{subdomain}.ezrentout.com/assets/{assetNum}/maintenance.api
+    - POST   https://{subdomain}.ezrentout.com/tasks.api
+    - GET    https://{subdomain}.ezrentout.com/tasks/{taskId}.api
+    - PATCH  https://{subdomain}.ezrentout.com/tasks/{taskId}/start.api
+    - PATCH  https://{subdomain}.ezrentout.com/tasks/{taskId}/end.api
+  endpointsModeled:
+    - note: |
+        Request and response bodies (schemas) in the OpenAPI are modeled
+        representations. EZRentOut publishes endpoint paths, methods, and curl
+        examples in its developer docs but does not publish a machine-readable
+        OpenAPI document, so property sets on Order, Asset, InventoryItem,
+        Bundle, Customer, Member, Location, and BookedDate are illustrative and
+        should be verified against live API responses. The set of paths above is
+        a representative (not exhaustive) selection of the documented API.
+sources:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+    note: EZRentOut developer documentation - base URL, token-header auth, and endpoint reference with curl examples.
+  - url: https://ezo.io/ezrentout/blog/location-tracking-assets-api/
+    type: Documentation
+    note: How-to for enabling location tracking (GPS coordinates) on assets via the API.
+  - url: https://ezo.io/ezrentout/pricing/
+    type: Pricing
+    note: EZRentOut subscription tiers; API access is a Fair Use benefit of paid plans, not separately metered.
+  - url: https://ezo.io/ezofficeinventory/developers/
+    type: Documentation
+    note: Sister product (EZOfficeInventory) developer docs; documents ~60 requests/minute Fair Use, used as a reference for EZRentOut rate behavior.
+  - url: https://www.linkedin.com/showcase/ezrentout/
+    type: LinkedIn
+    note: EZRentOut is presented as "EZRentOut by EZO".
+actions:
+  asyncapiPath: null
+  apisYmlUpdated: true
+  reason: |
+    No WebSocket or other server-push protocol surface exists, and EZRentOut's
+    own public API is request/response REST scoped to a per-company subdomain.
+    No AsyncAPI document was created because there is no documented event,
+    streaming, or WebSocket transport on EZRentOut's API to model. A public
+    outbound webhooks API is likewise not documented as of the review date.

@@ -1,0 +1,66 @@
+specification: API Commons Rate Limits
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/RateLimits
+provider: EZRentOut
+providerId: ezrentout
+created: '2026-07-03'
+modified: '2026-07-03'
+reconciled: false
+tags:
+- Equipment Rental
+- Rental Management
+- EZO
+- Rate Limiting
+- Quotas
+description: >-
+  EZRentOut applies API usage limits under a Fair Use policy rather than
+  publishing a single fixed public quota. Trial accounts are throttled to
+  approximately 1,000 API requests per day. When a limit is exceeded, the API
+  responds with HTTP 429 (Too Many Requests) and a Retry-After header indicating
+  how many seconds to wait; responses also carry X-Rate-Limit and
+  X-Rate-Limit-Remaining headers so clients can track their remaining budget.
+  EZO's sister product EZOfficeInventory documents a Fair Use rate of roughly 60
+  API requests per minute, which is a reasonable reference point for EZRentOut's
+  per-minute Fair Use behavior; confirm your account's specific limits with EZO.
+notes: >-
+  Exact per-plan and per-minute numeric limits for paid EZRentOut tiers are not
+  publicly published as of the review date. The 1,000/day figure is documented
+  for trial customers; the ~60 requests/minute figure is documented for the
+  related EZOfficeInventory API and is used here as an honest reference, not a
+  confirmed EZRentOut number. List endpoints are paginated via a page query
+  parameter, which is the primary lever for keeping request counts down.
+sources:
+- https://ezo.io/ezrentout/developers/
+- https://ezo.io/ezofficeinventory/developers/
+responseCodes:
+  throttled: 429
+headers:
+  retryAfter: Retry-After
+  limit: X-Rate-Limit
+  remaining: X-Rate-Limit-Remaining
+limits:
+- name: Trial API Requests
+  scope: account
+  metric: requests
+  limit: ~1000 per day (trial)
+  notes: Documented allowance for trial customers; paid tiers are higher under Fair Use.
+- name: Fair Use Rate
+  scope: account
+  metric: requests
+  limit: ~60 per minute (reference, per EZOfficeInventory Fair Use)
+  notes: Not confirmed as an EZRentOut number; based on EZO's sister-product documentation.
+- name: Pagination
+  scope: endpoint
+  metric: records
+  limit: per-page (page query parameter, default page 1)
+  notes: List endpoints return a bounded page of records; iterate with page to page through results.
+policies:
+- name: Fair Use
+  description: API access is provided to paying customers under a Fair Use policy; sustained excessive usage may be throttled.
+- name: Retry-After
+  description: On HTTP 429, honor the Retry-After header (seconds) before retrying.
+- name: Backoff Strategy
+  description: Implement exponential backoff with jitter and watch X-Rate-Limit-Remaining to avoid hitting the limit.
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

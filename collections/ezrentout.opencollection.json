@@ -1,0 +1,306 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "EZRentOut API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "apikey": {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "in": "header"
+      }
+    }
+  },
+  "items": [
+    {
+      "info": { "name": "Orders", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List orders.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/baskets.api?page=1" },
+          "docs": "Retrieves all orders (baskets), paginated via the page query parameter."
+        },
+        {
+          "info": { "name": "Create an order.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://{{subdomain}}.ezrentout.com/baskets.api",
+            "body": { "type": "json", "data": "{\n  \"customer_id\": 0,\n  \"starts_on\": \"01/01/2026\",\n  \"ends_on\": \"01/07/2026\"\n}" }
+          },
+          "docs": "Creates a new draft order (basket)."
+        },
+        {
+          "info": { "name": "Get order details.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{subdomain}}.ezrentout.com/baskets/:orderNum.api",
+            "params": [ { "name": "orderNum", "value": "", "type": "path", "description": "The order (basket) number." } ]
+          },
+          "docs": "Retrieves the details of a single order."
+        },
+        {
+          "info": { "name": "Add items to an order.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{subdomain}}.ezrentout.com/baskets/:orderNum/update_basket_from_show.api",
+            "params": [ { "name": "orderNum", "value": "", "type": "path", "description": "The order number." } ],
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Adds assets, inventory, stock, or coupons to a draft order."
+        },
+        {
+          "info": { "name": "Reserve an order.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{subdomain}}.ezrentout.com/baskets/:orderNum/reservation.api",
+            "params": [ { "name": "orderNum", "value": "", "type": "path", "description": "The order number." } ]
+          },
+          "docs": "Books (reserves) an order."
+        },
+        {
+          "info": { "name": "Check out (rent out) an order.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{subdomain}}.ezrentout.com/baskets/:orderNum/checkout.api",
+            "params": [ { "name": "orderNum", "value": "", "type": "path", "description": "The order number." } ]
+          },
+          "docs": "Rents out (checks out) a reserved order."
+        },
+        {
+          "info": { "name": "Check in (return) an order.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{subdomain}}.ezrentout.com/baskets/:orderNum/checkin.api",
+            "params": [ { "name": "orderNum", "value": "", "type": "path", "description": "The order number." } ]
+          },
+          "docs": "Returns (checks in) a rented-out order."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Assets", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List assets.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/assets.api?page=1" },
+          "docs": "Retrieves fixed (rentable) assets."
+        },
+        {
+          "info": { "name": "Create an asset.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://{{subdomain}}.ezrentout.com/assets.api",
+            "body": { "type": "json", "data": "{\n  \"name\": \"\",\n  \"group_id\": 0,\n  \"location_id\": 0\n}" }
+          },
+          "docs": "Creates a new fixed asset."
+        },
+        {
+          "info": { "name": "Get asset details.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{subdomain}}.ezrentout.com/assets/:assetNum.api",
+            "params": [ { "name": "assetNum", "value": "", "type": "path", "description": "The asset number." } ]
+          },
+          "docs": "Retrieves a single asset."
+        },
+        {
+          "info": { "name": "Update asset GPS coordinates.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{subdomain}}.ezrentout.com/assets/:assetNum/gps_coordinates.api",
+            "params": [ { "name": "assetNum", "value": "", "type": "path", "description": "The asset number." } ],
+            "body": { "type": "json", "data": "{\n  \"latitude\": 0,\n  \"longitude\": 0\n}" }
+          },
+          "docs": "Updates an asset's GPS coordinates for location tracking."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Inventory", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List inventory.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/inventory.api?page=1" },
+          "docs": "Retrieves inventory (volatile) items."
+        },
+        {
+          "info": { "name": "Create an inventory item.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://{{subdomain}}.ezrentout.com/inventory.api",
+            "body": { "type": "json", "data": "{\n  \"name\": \"\",\n  \"group_id\": 0\n}" }
+          },
+          "docs": "Creates a new inventory item."
+        },
+        {
+          "info": { "name": "Transfer inventory stock.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://{{subdomain}}.ezrentout.com/inventory/:assetNum/transfer_stock.api",
+            "params": [ { "name": "assetNum", "value": "", "type": "path", "description": "The inventory item number." } ],
+            "body": { "type": "json", "data": "{\n  \"from_location_id\": 0,\n  \"to_location_id\": 0,\n  \"quantity\": 0\n}" }
+          },
+          "docs": "Transfers inventory stock between locations."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Bundles", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List bundles.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/bundles.api?page=1" },
+          "docs": "Retrieves bundles (kits of assets and inventory)."
+        },
+        {
+          "info": { "name": "Get bundle details.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{subdomain}}.ezrentout.com/bundles/:bundleId.api",
+            "params": [ { "name": "bundleId", "value": "", "type": "path", "description": "The bundle ID." } ]
+          },
+          "docs": "Retrieves a single bundle."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Customers", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List customers.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/customers.api?page=1" },
+          "docs": "Retrieves customers."
+        },
+        {
+          "info": { "name": "Create a customer.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://{{subdomain}}.ezrentout.com/customers.api",
+            "body": { "type": "json", "data": "{\n  \"name\": \"\",\n  \"email\": \"\"\n}" }
+          },
+          "docs": "Creates a new customer."
+        },
+        {
+          "info": { "name": "Get customer details.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{subdomain}}.ezrentout.com/customers/:customerId.api",
+            "params": [ { "name": "customerId", "value": "", "type": "path", "description": "The customer ID." } ]
+          },
+          "docs": "Retrieves a single customer."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Members", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List members.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/members.api?page=1" },
+          "docs": "Retrieves members (staff users)."
+        },
+        {
+          "info": { "name": "Get member checked-out items.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{subdomain}}.ezrentout.com/members/:userId/checked_out_items.api",
+            "params": [ { "name": "userId", "value": "", "type": "path", "description": "The member (user) ID." } ]
+          },
+          "docs": "Lists the items a member currently has checked out."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Locations", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List locations.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/locations.api?page=1" },
+          "docs": "Retrieves locations (warehouses / branches)."
+        },
+        {
+          "info": { "name": "Get quantity by location.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/locations/get_quantity_by_location.api" },
+          "docs": "Returns item quantity broken down by location."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Availability", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "Get asset booked dates.", "type": "http" },
+          "http": {
+            "method": "GET",
+            "url": "https://{{subdomain}}.ezrentout.com/assets/:assetNum/booked_dates.api",
+            "params": [ { "name": "assetNum", "value": "", "type": "path", "description": "The asset number." } ]
+          },
+          "docs": "Returns reserved (booked) date ranges for an asset to avoid double-booking."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Payments", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List payment options.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/payment_options.api" },
+          "docs": "Lists available payment options."
+        },
+        {
+          "info": { "name": "Charge a payment against an order.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{subdomain}}.ezrentout.com/baskets/:orderNum/charge_pre_payment.api",
+            "params": [ { "name": "orderNum", "value": "", "type": "path", "description": "The order number." } ],
+            "body": { "type": "json", "data": "{\n  \"amount\": 0,\n  \"payment_option_id\": 0\n}" }
+          },
+          "docs": "Charges a payment against an order."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Purchase Orders", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List purchase orders.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/purchase_orders.api?page=1" },
+          "docs": "Retrieves purchase orders."
+        },
+        {
+          "info": { "name": "Receive items against a PO.", "type": "http" },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{{subdomain}}.ezrentout.com/purchase_orders/:poId/receive_items.api",
+            "params": [ { "name": "poId", "value": "", "type": "path", "description": "The purchase order ID." } ],
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Receives items against a purchase order."
+        }
+      ]
+    },
+    {
+      "info": { "name": "Maintenance", "type": "folder" },
+      "items": [
+        {
+          "info": { "name": "List services.", "type": "http" },
+          "http": { "method": "GET", "url": "https://{{subdomain}}.ezrentout.com/services.api?page=1" },
+          "docs": "Lists assets currently in service."
+        },
+        {
+          "info": { "name": "Create a work order.", "type": "http" },
+          "http": {
+            "method": "POST",
+            "url": "https://{{subdomain}}.ezrentout.com/tasks.api",
+            "body": { "type": "json", "data": "{}" }
+          },
+          "docs": "Creates a work order (task)."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

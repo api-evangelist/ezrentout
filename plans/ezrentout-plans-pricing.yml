@@ -1,0 +1,151 @@
+specification: API Commons Plans
+specificationVersion: '0.1'
+schema: https://raw.githubusercontent.com/api-evangelist/interface-research/main/schema/api-commons.yml#/$defs/Plans
+provider: EZRentOut
+providerId: ezrentout
+created: '2026-07-03'
+modified: '2026-07-03'
+reconciled: false
+tags:
+- Equipment Rental
+- Rental Management
+- Asset Tracking
+- EZO
+- Plans
+description: >-
+  EZRentOut (by EZO) is sold as a SaaS rental management platform on tiered
+  monthly subscriptions rather than as a metered API product. The REST API is
+  not a separately priced product - it is made available to paying customers for
+  custom integrations, subject to Fair Use, and must be enabled per company in
+  Settings. There is no per-call API charge; API access rides on the underlying
+  subscription plan. A free trial is available. Published list prices below are
+  approximate and were observed from public listings as of the created date;
+  confirm current pricing, seat counts, and which tiers include API access on the
+  EZRentOut pricing page during reconciliation.
+notes: >-
+  Prices are billed annually unless noted; monthly billing is available on some
+  tiers at a higher effective rate. Seat/user counts and per-extra-user pricing
+  vary by tier and were not fully confirmed. Enterprise pricing is custom. API
+  access and advanced integration limits are typically gated to higher tiers -
+  verify per-tier API eligibility with EZO sales.
+sources:
+- https://ezo.io/ezrentout/pricing/
+- https://ezo.io/ezrentout/developers/
+- https://www.g2.com/products/ezrentout/pricing
+- https://www.capterra.com/p/134914/EZRentOut/pricing/
+plans:
+- id: ezrentout-trial
+  name: Free Trial
+  type: trial
+  description: >-
+    Time-limited free trial of the EZRentOut platform. API access can be enabled
+    during the trial; trial accounts are subject to a reduced API request
+    allowance (approximately 1,000 requests per day).
+  entries:
+  - label: Trial API Requests
+    name: trial_api_requests
+    type: usage
+    metric: requests
+    limit: 1000
+    timeFrame: day
+    geo: global
+    unit: 1
+    price: free during trial
+    userMultiplied: false
+  elements:
+  - name: Full Platform Evaluation
+  - name: API Access (enable in Settings)
+  - name: Reduced Trial API Allowance
+- id: ezrentout-essential
+  name: Essential
+  type: paid
+  description: >-
+    Entry subscription tier for smaller rental operations. Approximately $59 per
+    month (billed annually). Core order, asset, inventory, customer, and location
+    management. Confirm whether API access is included at this tier.
+  entries:
+  - label: Subscription
+    name: essential_subscription
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: approx. $59/month (billed annually)
+    userMultiplied: false
+  elements:
+  - name: Order and Asset Management
+  - name: Inventory Tracking
+  - name: Customer Management
+- id: ezrentout-growth
+  name: Growth
+  type: paid
+  description: >-
+    Mid-tier subscription for growing rental businesses. Approximately $399 per
+    month (billed annually; monthly billing available). Adds broader
+    integrations and higher limits, generally including API access for custom
+    integrations under Fair Use.
+  entries:
+  - label: Subscription
+    name: growth_subscription
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: approx. $399/month (billed annually)
+    userMultiplied: false
+  elements:
+  - name: API Access (Fair Use)
+  - name: Integrations
+  - name: Multi-location Support
+- id: ezrentout-premium
+  name: Premium
+  type: paid
+  description: >-
+    Higher subscription tier. Approximately $499 per month (billed annually;
+    monthly billing available). Expanded users, integrations, and advanced
+    features on top of Growth.
+  entries:
+  - label: Subscription
+    name: premium_subscription
+    type: flat
+    metric: subscription
+    limit: -1
+    timeFrame: month
+    geo: global
+    unit: 1
+    price: approx. $499/month (billed annually)
+    userMultiplied: false
+  elements:
+  - name: API Access (Fair Use)
+  - name: Advanced Features
+  - name: Priority Support
+- id: ezrentout-enterprise
+  name: Enterprise
+  type: enterprise
+  description: >-
+    Custom plan for large rental operations - negotiated user counts, security
+    and SSO, dedicated support, SLAs, and expanded API/integration allowances.
+    Contact EZO sales.
+  entries:
+  - label: Enterprise Agreement
+    name: enterprise
+    type: flat
+    metric: contract
+    limit: -1
+    timeFrame: year
+    geo: global
+    unit: 1
+    price: contact sales
+    userMultiplied: false
+  elements:
+  - name: Custom User Counts
+  - name: SSO and Security Reviews
+  - name: SLAs and Dedicated Support
+  - name: Expanded API Allowance
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

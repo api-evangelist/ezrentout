@@ -1,0 +1,280 @@
+aid: ezrentout
+url: https://raw.githubusercontent.com/api-evangelist/ezrentout/refs/heads/main/apis.yml
+name: EZRentOut
+kind: company
+description: EZRentOut is cloud-based equipment rental management software from EZO
+  (the company behind EZOfficeInventory) for rental businesses to manage orders,
+  fixed and inventory assets, bundles, customers, members, locations, purchase
+  orders, and maintenance. Its REST API is made available to paying customers for
+  custom integrations - each request is authenticated with a per-company access
+  token sent in a token header over HTTPS, endpoints are namespaced with a .api
+  suffix, and calls are scoped to the customer's own {subdomain}.ezrentout.com
+  tenant. The API covers orders (baskets), assets, inventory and stock assets,
+  bundles, customers and businesses, members, locations, availability, payments and
+  invoicing, purchase orders, and service/work-order maintenance.
+image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+tags:
+- Equipment Rental
+- Rental Management
+- Asset Tracking
+- Inventory
+- Order Management
+- EZO
+created: '2026-07-03'
+modified: '2026-07-03'
+specificationVersion: '0.19'
+apis:
+- aid: ezrentout:ezrentout-orders-api
+  name: EZRentOut Orders API
+  tags:
+  - Orders
+  - Baskets
+  - Reservations
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: https://ezo.io/ezrentout/developers/
+    type: APIReference
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Create and manage rental orders (called baskets) end to end - draft an
+    order, add assets, inventory, and stock, reserve and cancel reservations, apply
+    coupons, taxes, and damage charges, check out (rent out), check in (return), and
+    read order details and history.
+- aid: ezrentout:ezrentout-assets-api
+  name: EZRentOut Fixed Assets API
+  tags:
+  - Assets
+  - Equipment
+  - GPS
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: https://ezo.io/ezrentout/blog/location-tracking-assets-api/
+    type: APIReference
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Manage serialized fixed (rentable) assets - create, list, filter,
+    retrieve, update, retire, and delete equipment, update GPS coordinates for
+    location tracking, read asset history and booked dates, and search the catalog.
+- aid: ezrentout:ezrentout-inventory-api
+  name: EZRentOut Inventory API
+  tags:
+  - Inventory
+  - Stock
+  - Volatile Assets
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Manage inventory (volatile assets) and asset stock - create, list,
+    filter, retrieve, update, and delete items, add and transfer stock across
+    locations, read stock history and booked dates, and inspect location-based
+    quantity thresholds.
+- aid: ezrentout:ezrentout-bundles-api
+  name: EZRentOut Bundles API
+  tags:
+  - Bundles
+  - Kits
+  - Packages
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Create, list, and retrieve bundles - reusable packages (kits) of assets
+    and inventory that can be rented out together as a single line on an order.
+- aid: ezrentout:ezrentout-customers-api
+  name: EZRentOut Customers API
+  tags:
+  - Customers
+  - Businesses
+  - Contacts
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Manage the people and organizations that rent - customers, businesses,
+    and business contacts - with full CRUD, activation and deactivation, and
+    shipping and billing address management per customer and per business.
+- aid: ezrentout:ezrentout-members-api
+  name: EZRentOut Members API
+  tags:
+  - Members
+  - Users
+  - Staff
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Manage members (staff users) of the rental account - create, list,
+    retrieve, and update members, mark them active or inactive, and read the items a
+    member currently has checked out.
+- aid: ezrentout:ezrentout-locations-api
+  name: EZRentOut Locations API
+  tags:
+  - Locations
+  - Warehouses
+  - Multi-location
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Manage the locations (warehouses / branches) that assets and inventory
+    live in - create, list, retrieve, and update locations, activate and deactivate
+    them, and read item quantity by location.
+- aid: ezrentout:ezrentout-availability-api
+  name: EZRentOut Availability API
+  tags:
+  - Availability
+  - Booked Dates
+  - Scheduling
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Check availability for rental scheduling - read booked (reserved) dates
+    for a specific asset, inventory item, or stock asset, and read available quantity
+    by location, so integrations can avoid double-booking before reserving an order.
+- aid: ezrentout:ezrentout-payments-api
+  name: EZRentOut Payments and Invoicing API
+  tags:
+  - Payments
+  - Invoicing
+  - Taxes
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Handle order billing - list payment options, charge a pre-payment or
+    a full payment against an order, void a recorded payment, apply taxes (custom and
+    group tax IDs) and pricing coupons, and add damage charges. Invoicing in
+    EZRentOut is expressed through these order-scoped payment and tax endpoints
+    rather than a standalone invoice resource.
+- aid: ezrentout:ezrentout-purchase-orders-api
+  name: EZRentOut Purchase Orders API
+  tags:
+  - Purchase Orders
+  - Procurement
+  - Vendors
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Manage procurement - create and update purchase orders, add catalog and
+    non-catalog line items, confirm, receive items against, void, and delete a PO,
+    read PO details, and manage the vendors POs are raised with.
+- aid: ezrentout:ezrentout-maintenance-api
+  name: EZRentOut Maintenance and Work Orders API
+  tags:
+  - Maintenance
+  - Services
+  - Work Orders
+  image: https://kinlane-images.s3.amazonaws.com/shared/apis-json/apis-json-logo.jpg
+  humanURL: https://ezo.io/ezrentout/developers/
+  baseURL: https://{subdomain}.ezrentout.com
+  properties:
+  - url: https://ezo.io/ezrentout/developers/
+    type: Documentation
+  - url: openapi/ezrentout-openapi.yml
+    type: OpenAPI
+  - url: collections/ezrentout.postman_collection.json
+    type: PostmanCollection
+  - url: collections/ezrentout.opencollection.json
+    type: OpenCollection
+  description: Keep equipment serviceable - put assets into maintenance, create,
+    schedule, update, and complete service records, and manage work orders (tasks)
+    with start and end, work logs, linked inventory, and checklists.
+common:
+- type: LinkedIn
+  url: https://www.linkedin.com/showcase/ezrentout/
+- type: Website
+  url: https://ezo.io/ezrentout/
+- type: Documentation
+  url: https://ezo.io/ezrentout/developers/
+- type: Plans
+  url: plans/ezrentout-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/ezrentout-rate-limits.yml
+- type: FinOps
+  url: finops/ezrentout-finops.yml
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com
