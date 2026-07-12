@@ -263,6 +263,12 @@ apis:
     schedule, update, and complete service records, and manage work orders (tasks)
     with start and end, work logs, linked inventory, and checklists.
 common:
+- type: TrustCenter
+  url: security/ezrentout-trust-center.yml
+- type: DomainSecurity
+  url: security/ezrentout-domain-security.yml
+- type: Authentication
+  url: authentication/ezrentout-authentication.yml
 - type: LinkedIn
   url: https://www.linkedin.com/showcase/ezrentout/
 - type: Website
@@ -275,6 +281,8 @@ common:
   url: rate-limits/ezrentout-rate-limits.yml
 - type: FinOps
   url: finops/ezrentout-finops.yml
+- url: https://ezo.io/ezrentout/blog/feed/
+  type: Blog
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

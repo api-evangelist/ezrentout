@@ -1,0 +1,15 @@
+generated: '2026-07-11'
+method: searched
+probe: true
+source: https://ezo.io/security/
+url: https://ezo.io/security/
+certifications:
+- SOC 2
+- ISO 27001
+- CSA STAR
+evidence:
+- source: https://ezo.io/security/
+  keywords:
+  - soc 2
+  - iso 27001
+  - csa star

@@ -1,0 +1,17 @@
+generated: '2026-07-11'
+method: derived
+source: openapi/ezrentout-openapi.yml
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+schemes:
+- name: tokenAuth
+  type: apiKey
+  in: header
+  parameter: token
+  description: Per-company access token generated in Settings (API must be enabled by the account
+    owner). Sent in the `token` HTTP header on every request over HTTPS.
+  sources:
+  - openapi/ezrentout-openapi.yml
