@@ -263,6 +263,8 @@ apis:
     schedule, update, and complete service records, and manage work orders (tasks)
     with start and end, work logs, linked inventory, and checklists.
 common:
+- type: AgenticAccess
+  url: agentic-access/ezrentout-agentic-access.yml
 - type: TrustCenter
   url: security/ezrentout-trust-center.yml
 - type: DomainSecurity
