@@ -1,0 +1,197 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets Inventory API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Inventory
+  description: Volatile assets (inventory) and asset stock, with per-location stock.
+paths:
+  /inventory.api:
+    get:
+      operationId: listInventory
+      tags:
+      - Inventory
+      summary: List inventory items
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of inventory items.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createInventory
+      tags:
+      - Inventory
+      summary: Create an inventory item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        '201':
+          description: The created inventory item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+  /inventory/{assetNum}.api:
+    get:
+      operationId: getInventory
+      tags:
+      - Inventory
+      summary: Get inventory item details
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The inventory item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+    put:
+      operationId: updateInventory
+      tags:
+      - Inventory
+      summary: Update an inventory item
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        '200':
+          description: The updated inventory item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+    delete:
+      operationId: deleteInventory
+      tags:
+      - Inventory
+      summary: Delete an inventory item
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The inventory item was deleted.
+  /inventory/{assetNum}/transfer_stock.api:
+    post:
+      operationId: transferInventoryStock
+      tags:
+      - Inventory
+      summary: Transfer inventory stock between locations
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from_location_id:
+                  type: integer
+                to_location_id:
+                  type: integer
+                quantity:
+                  type: number
+      responses:
+        '200':
+          description: The stock was transferred.
+  /stock_assets.api:
+    get:
+      operationId: listStockAssets
+      tags:
+      - Inventory
+      summary: List stock assets
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of stock assets.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createStockAsset
+      tags:
+      - Inventory
+      summary: Create a stock asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created stock asset.
+components:
+  parameters:
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+  schemas:
+    InventoryItem:
+      type: object
+      description: A volatile asset (inventory item) tracked by quantity.
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        group_id:
+          type: integer
+        total_quantity:
+          type: number
+        available_quantity:
+          type: number
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.

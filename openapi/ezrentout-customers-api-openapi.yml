@@ -1,0 +1,206 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets Customers API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Customers
+  description: Customers, businesses, and business contacts, with addresses.
+paths:
+  /customers.api:
+    get:
+      operationId: listCustomers
+      tags:
+      - Customers
+      summary: List customers
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of customers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+    post:
+      operationId: createCustomer
+      tags:
+      - Customers
+      summary: Create a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '201':
+          description: The created customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+  /customers/{customerId}.api:
+    get:
+      operationId: getCustomer
+      tags:
+      - Customers
+      summary: Get customer details
+      parameters:
+      - $ref: '#/components/parameters/CustomerId'
+      responses:
+        '200':
+          description: The customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+    patch:
+      operationId: updateCustomer
+      tags:
+      - Customers
+      summary: Update a customer
+      parameters:
+      - $ref: '#/components/parameters/CustomerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '200':
+          description: The updated customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+    delete:
+      operationId: deleteCustomer
+      tags:
+      - Customers
+      summary: Delete a customer
+      parameters:
+      - $ref: '#/components/parameters/CustomerId'
+      responses:
+        '200':
+          description: The customer was deleted.
+  /businesses.api:
+    get:
+      operationId: listBusinesses
+      tags:
+      - Customers
+      summary: List businesses
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of businesses.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createBusiness
+      tags:
+      - Customers
+      summary: Create a business
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created business.
+  /contacts.api:
+    get:
+      operationId: listContacts
+      tags:
+      - Customers
+      summary: List business contacts
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of contacts.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createContact
+      tags:
+      - Customers
+      summary: Create a business contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created contact.
+components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        business_id:
+          type: integer
+  parameters:
+    CustomerId:
+      name: customerId
+      in: path
+      required: true
+      description: The customer ID.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.

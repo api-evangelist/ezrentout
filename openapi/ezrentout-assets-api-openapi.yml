@@ -1,0 +1,262 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Assets
+  description: Serialized fixed (rentable) assets and GPS location tracking.
+paths:
+  /assets.api:
+    get:
+      operationId: listAssets
+      tags:
+      - Assets
+      summary: List assets
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of assets.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Asset'
+    post:
+      operationId: createAsset
+      tags:
+      - Assets
+      summary: Create an asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetInput'
+      responses:
+        '201':
+          description: The created asset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+  /assets/filter.api:
+    get:
+      operationId: filterAssets
+      tags:
+      - Assets
+      summary: Filter assets
+      description: Retrieves rented-out or otherwise filtered assets.
+      parameters:
+      - name: filter
+        in: query
+        schema:
+          type: string
+      - name: filter_val
+        in: query
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A filtered page of assets.
+          content:
+            application/json:
+              schema:
+                type: object
+  /assets/{assetNum}.api:
+    get:
+      operationId: getAsset
+      tags:
+      - Assets
+      summary: Get asset details
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The asset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: updateAsset
+      tags:
+      - Assets
+      summary: Update an asset
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetInput'
+      responses:
+        '200':
+          description: The updated asset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+    delete:
+      operationId: deleteAsset
+      tags:
+      - Assets
+      summary: Delete an asset
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The asset was deleted.
+  /assets/{assetNum}/gps_coordinates.api:
+    patch:
+      operationId: updateAssetGps
+      tags:
+      - Assets
+      summary: Update asset GPS coordinates
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+      responses:
+        '200':
+          description: The updated asset location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+  /assets/{assetNum}/retire.api:
+    put:
+      operationId: retireAsset
+      tags:
+      - Assets
+      summary: Retire an asset
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The retired asset.
+  /search.api:
+    get:
+      operationId: searchCatalog
+      tags:
+      - Assets
+      summary: Search assets and inventory
+      parameters:
+      - name: search
+        in: query
+        schema:
+          type: string
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Search results.
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    Asset:
+      type: object
+      description: A serialized fixed (rentable) asset.
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        identifier:
+          type: string
+        state:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+    AssetInput:
+      type: object
+      properties:
+        name:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.

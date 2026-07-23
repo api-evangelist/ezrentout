@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets Payments API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Payments
+  description: Order payments, taxes, coupons, and damage charges (invoicing).
+paths:
+  /payment_options.api:
+    get:
+      operationId: listPaymentOptions
+      tags:
+      - Payments
+      summary: List payment options
+      responses:
+        '200':
+          description: Available payment options.
+          content:
+            application/json:
+              schema:
+                type: object
+  /pricing_coupons.api:
+    get:
+      operationId: listCoupons
+      tags:
+      - Payments
+      summary: List pricing coupons
+      responses:
+        '200':
+          description: Available pricing coupons.
+          content:
+            application/json:
+              schema:
+                type: object
+  /baskets/{orderNum}/charge_pre_payment.api:
+    patch:
+      operationId: chargeOrderPayment
+      tags:
+      - Payments
+      summary: Charge a payment against an order
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                payment_option_id:
+                  type: integer
+      responses:
+        '200':
+          description: The payment was recorded.
+  /baskets/{orderNum}/charge_damages.api:
+    patch:
+      operationId: chargeOrderDamages
+      tags:
+      - Payments
+      summary: Add damage charges to an order
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The damage charge was applied.
+  /baskets/{orderNum}/apply_taxes.api:
+    patch:
+      operationId: applyOrderTaxes
+      tags:
+      - Payments
+      summary: Apply taxes to an order
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                custom_tax_ids:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Taxes were applied.
+components:
+  parameters:
+    OrderNum:
+      name: orderNum
+      in: path
+      required: true
+      description: The order (basket) number.
+      schema:
+        type: integer
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.

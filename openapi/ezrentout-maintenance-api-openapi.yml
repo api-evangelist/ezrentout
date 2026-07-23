@@ -1,0 +1,170 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets Maintenance API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Maintenance
+  description: Service records and work orders (tasks) to keep equipment serviceable.
+paths:
+  /services.api:
+    get:
+      operationId: listServices
+      tags:
+      - Maintenance
+      summary: List assets in service
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of service records.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createService
+      tags:
+      - Maintenance
+      summary: Create a service record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created service record.
+  /services/{serviceId}/complete.api:
+    patch:
+      operationId: completeService
+      tags:
+      - Maintenance
+      summary: Complete a service record
+      parameters:
+      - name: serviceId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: The service was completed.
+  /assets/{assetNum}/maintenance.api:
+    patch:
+      operationId: putAssetInMaintenance
+      tags:
+      - Maintenance
+      summary: Put an asset into maintenance
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The asset was put into maintenance.
+  /tasks.api:
+    post:
+      operationId: createWorkOrder
+      tags:
+      - Maintenance
+      summary: Create a work order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created work order.
+  /tasks/{taskId}.api:
+    get:
+      operationId: getWorkOrder
+      tags:
+      - Maintenance
+      summary: Get work order details
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: The work order.
+          content:
+            application/json:
+              schema:
+                type: object
+  /tasks/{taskId}/start.api:
+    patch:
+      operationId: startWorkOrder
+      tags:
+      - Maintenance
+      summary: Start a work order
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: The work order was started.
+  /tasks/{taskId}/end.api:
+    patch:
+      operationId: endWorkOrder
+      tags:
+      - Maintenance
+      summary: End a work order
+      parameters:
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: The work order was ended.
+components:
+  parameters:
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.

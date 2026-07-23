@@ -1,0 +1,157 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets Purchase Orders API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Purchase Orders
+  description: Procurement - purchase orders and vendors.
+paths:
+  /purchase_orders.api:
+    get:
+      operationId: listPurchaseOrders
+      tags:
+      - Purchase Orders
+      summary: List purchase orders
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of purchase orders.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createPurchaseOrder
+      tags:
+      - Purchase Orders
+      summary: Create a purchase order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created purchase order.
+  /purchase_orders/{poId}.api:
+    get:
+      operationId: getPurchaseOrder
+      tags:
+      - Purchase Orders
+      summary: Get purchase order details
+      parameters:
+      - $ref: '#/components/parameters/PoId'
+      responses:
+        '200':
+          description: The purchase order.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      operationId: updatePurchaseOrder
+      tags:
+      - Purchase Orders
+      summary: Update a purchase order
+      parameters:
+      - $ref: '#/components/parameters/PoId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The updated purchase order.
+  /purchase_orders/{poId}/receive_items.api:
+    patch:
+      operationId: receivePurchaseOrderItems
+      tags:
+      - Purchase Orders
+      summary: Receive items against a purchase order
+      parameters:
+      - $ref: '#/components/parameters/PoId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The items were received.
+  /vendors.api:
+    get:
+      operationId: listVendors
+      tags:
+      - Purchase Orders
+      summary: List vendors
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of vendors.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createVendor
+      tags:
+      - Purchase Orders
+      summary: Create a vendor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created vendor.
+components:
+  parameters:
+    PoId:
+      name: poId
+      in: path
+      required: true
+      description: The purchase order ID.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.

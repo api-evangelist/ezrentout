@@ -1,0 +1,307 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets Orders API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Orders
+  description: Rental orders, called baskets - draft, reserve, check out, and check in.
+paths:
+  /baskets.api:
+    get:
+      operationId: listOrders
+      tags:
+      - Orders
+      summary: List orders
+      description: Retrieves all orders (baskets). Paginated with the page parameter.
+      parameters:
+      - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    post:
+      operationId: createOrder
+      tags:
+      - Orders
+      summary: Create an order
+      description: Creates a new draft order (basket).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '201':
+          description: The created order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /baskets/{orderNum}.api:
+    get:
+      operationId: getOrder
+      tags:
+      - Orders
+      summary: Get order details
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateOrder
+      tags:
+      - Orders
+      summary: Update an order
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '200':
+          description: The updated order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/history.api:
+    get:
+      operationId: getOrderHistory
+      tags:
+      - Orders
+      summary: Get order history
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The order's change history.
+          content:
+            application/json:
+              schema:
+                type: object
+  /baskets/{orderNum}/update_basket_from_show.api:
+    patch:
+      operationId: addOrderLineItems
+      tags:
+      - Orders
+      summary: Add assets, inventory, or stock to an order
+      description: Adds assets, inventory, stock, or coupons to a draft order.
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The updated order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/reservation.api:
+    patch:
+      operationId: reserveOrder
+      tags:
+      - Orders
+      summary: Book (reserve) an order
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The reserved order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/cancel_reservation.api:
+    patch:
+      operationId: cancelOrderReservation
+      tags:
+      - Orders
+      summary: Cancel an order reservation
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The updated order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/checkout.api:
+    patch:
+      operationId: checkoutOrder
+      tags:
+      - Orders
+      summary: Rent out (check out) an order
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The rented-out order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/checkin.api:
+    patch:
+      operationId: checkinOrder
+      tags:
+      - Orders
+      summary: Return (check in) an order
+      parameters:
+      - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The returned order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+components:
+  responses:
+    RateLimited:
+      description: Too many requests. Honor the Retry-After header before retrying.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+        X-Rate-Limit:
+          schema:
+            type: integer
+          description: The account request quota for the window.
+        X-Rate-Limit-Remaining:
+          schema:
+            type: integer
+          description: Requests remaining in the current window.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  parameters:
+    OrderNum:
+      name: orderNum
+      in: path
+      required: true
+      description: The order (basket) number.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+  schemas:
+    OrderInput:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+        starts_on:
+          type: string
+        ends_on:
+          type: string
+        location_id:
+          type: integer
+    Order:
+      type: object
+      description: A rental order (basket).
+      properties:
+        id:
+          type: integer
+        number:
+          type: integer
+        state:
+          type: string
+          description: Draft, Booked, Rented Out, Returned, etc.
+        customer_id:
+          type: integer
+        starts_on:
+          type: string
+          description: Rental start date (mm/dd/yyyy).
+        ends_on:
+          type: string
+          description: Rental end date (mm/dd/yyyy).
+        location_id:
+          type: integer
+        rental_total:
+          type: number
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.

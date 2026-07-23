@@ -1,0 +1,109 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut Assets Availability API
+  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
+
+
+    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+- url: https://{subdomain}.ezrentout.com
+  description: Customer rental account (tenant)
+  variables:
+    subdomain:
+      default: your-company
+      description: Your EZRentOut company subdomain.
+security:
+- tokenAuth: []
+tags:
+- name: Availability
+  description: Booked dates and per-location quantity for scheduling.
+paths:
+  /locations/get_quantity_by_location.api:
+    get:
+      operationId: getQuantityByLocation
+      tags:
+      - Availability
+      summary: Get item quantity by location
+      description: Returns available quantity of items broken down by location.
+      parameters:
+      - name: asset_id
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Quantity by location.
+          content:
+            application/json:
+              schema:
+                type: object
+  /assets/{assetNum}/booked_dates.api:
+    get:
+      operationId: getAssetBookedDates
+      tags:
+      - Availability
+      summary: Get booked dates for an asset
+      description: Returns the reserved (booked) date ranges for an asset so integrations can avoid double-booking.
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: Booked date ranges.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  booked_dates:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BookedDate'
+  /inventory/{assetNum}/booked_dates.api:
+    get:
+      operationId: getInventoryBookedDates
+      tags:
+      - Availability
+      summary: Get booked dates for an inventory item
+      parameters:
+      - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: Booked date ranges.
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  schemas:
+    BookedDate:
+      type: object
+      properties:
+        starts_on:
+          type: string
+        ends_on:
+          type: string
+        order_number:
+          type: integer
+  parameters:
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: Per-company access token generated in Settings (API must be enabled by the account owner). Sent in the `token` HTTP header on every request over HTTPS.
