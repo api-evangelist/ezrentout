@@ -1,0 +1,1436 @@
+openapi: 3.0.3
+info:
+  title: EZRentOut API
+  description: >-
+    REST API for EZRentOut, the cloud equipment rental management platform from
+    EZO (the company behind EZOfficeInventory). The API lets paying customers
+    build custom integrations against their own rental account: orders (baskets),
+    fixed assets, inventory and stock assets, bundles, customers and businesses,
+    members, locations, availability, order payments and taxes, purchase orders,
+    and maintenance / work orders.
+
+
+    Every request is scoped to the customer's own tenant at
+    https://{subdomain}.ezrentout.com and is authenticated with a per-company
+    access token. The token is generated in Settings (API is disabled by default
+    and must be enabled by the account owner) and sent in a `token` HTTP header
+    over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List
+    endpoints are paginated with a `page` query parameter (default 1). Dates use
+    `mm/dd/yyyy` and times use `hh:mm`.
+
+
+    Endpoint paths and the authentication model are grounded in EZRentOut's
+    public developer documentation (https://ezo.io/ezrentout/developers/).
+    Request and response schemas here are modeled representations - EZRentOut
+    does not publish a machine-readable OpenAPI document, so property sets are
+    illustrative rather than exhaustive.
+  version: '1.0'
+  contact:
+    name: EZO / EZRentOut Support
+    url: https://ezo.io/ezrentout/developers/
+    email: support@ezo.io
+  termsOfService: https://ezo.io/ezrentout/terms-of-service/
+servers:
+  - url: https://{subdomain}.ezrentout.com
+    description: Customer rental account (tenant)
+    variables:
+      subdomain:
+        default: your-company
+        description: Your EZRentOut company subdomain.
+security:
+  - tokenAuth: []
+tags:
+  - name: Orders
+    description: Rental orders, called baskets - draft, reserve, check out, and check in.
+  - name: Assets
+    description: Serialized fixed (rentable) assets and GPS location tracking.
+  - name: Inventory
+    description: Volatile assets (inventory) and asset stock, with per-location stock.
+  - name: Bundles
+    description: Reusable kits of assets and inventory rented together.
+  - name: Customers
+    description: Customers, businesses, and business contacts, with addresses.
+  - name: Members
+    description: Staff members (users) of the rental account.
+  - name: Locations
+    description: Warehouses / branches that hold assets and inventory.
+  - name: Availability
+    description: Booked dates and per-location quantity for scheduling.
+  - name: Payments
+    description: Order payments, taxes, coupons, and damage charges (invoicing).
+  - name: Purchase Orders
+    description: Procurement - purchase orders and vendors.
+  - name: Maintenance
+    description: Service records and work orders (tasks) to keep equipment serviceable.
+paths:
+  /baskets.api:
+    get:
+      operationId: listOrders
+      tags: [Orders]
+      summary: List orders
+      description: Retrieves all orders (baskets). Paginated with the page parameter.
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of orders.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  orders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+    post:
+      operationId: createOrder
+      tags: [Orders]
+      summary: Create an order
+      description: Creates a new draft order (basket).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '201':
+          description: The created order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /baskets/{orderNum}.api:
+    get:
+      operationId: getOrder
+      tags: [Orders]
+      summary: Get order details
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      operationId: updateOrder
+      tags: [Orders]
+      summary: Update an order
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '200':
+          description: The updated order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/history.api:
+    get:
+      operationId: getOrderHistory
+      tags: [Orders]
+      summary: Get order history
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The order's change history.
+          content:
+            application/json:
+              schema:
+                type: object
+  /baskets/{orderNum}/update_basket_from_show.api:
+    patch:
+      operationId: addOrderLineItems
+      tags: [Orders]
+      summary: Add assets, inventory, or stock to an order
+      description: Adds assets, inventory, stock, or coupons to a draft order.
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The updated order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/reservation.api:
+    patch:
+      operationId: reserveOrder
+      tags: [Orders]
+      summary: Book (reserve) an order
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The reserved order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/cancel_reservation.api:
+    patch:
+      operationId: cancelOrderReservation
+      tags: [Orders]
+      summary: Cancel an order reservation
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The updated order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/checkout.api:
+    patch:
+      operationId: checkoutOrder
+      tags: [Orders]
+      summary: Rent out (check out) an order
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The rented-out order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /baskets/{orderNum}/checkin.api:
+    patch:
+      operationId: checkinOrder
+      tags: [Orders]
+      summary: Return (check in) an order
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      responses:
+        '200':
+          description: The returned order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /assets.api:
+    get:
+      operationId: listAssets
+      tags: [Assets]
+      summary: List assets
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of assets.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  assets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Asset'
+    post:
+      operationId: createAsset
+      tags: [Assets]
+      summary: Create an asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetInput'
+      responses:
+        '201':
+          description: The created asset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+  /assets/filter.api:
+    get:
+      operationId: filterAssets
+      tags: [Assets]
+      summary: Filter assets
+      description: Retrieves rented-out or otherwise filtered assets.
+      parameters:
+        - name: filter
+          in: query
+          schema:
+            type: string
+        - name: filter_val
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A filtered page of assets.
+          content:
+            application/json:
+              schema:
+                type: object
+  /assets/{assetNum}.api:
+    get:
+      operationId: getAsset
+      tags: [Assets]
+      summary: Get asset details
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The asset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      operationId: updateAsset
+      tags: [Assets]
+      summary: Update an asset
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetInput'
+      responses:
+        '200':
+          description: The updated asset.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+    delete:
+      operationId: deleteAsset
+      tags: [Assets]
+      summary: Delete an asset
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The asset was deleted.
+  /assets/{assetNum}/gps_coordinates.api:
+    patch:
+      operationId: updateAssetGps
+      tags: [Assets]
+      summary: Update asset GPS coordinates
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                longitude:
+                  type: number
+      responses:
+        '200':
+          description: The updated asset location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+  /assets/{assetNum}/retire.api:
+    put:
+      operationId: retireAsset
+      tags: [Assets]
+      summary: Retire an asset
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The retired asset.
+  /search.api:
+    get:
+      operationId: searchCatalog
+      tags: [Assets]
+      summary: Search assets and inventory
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: Search results.
+          content:
+            application/json:
+              schema:
+                type: object
+  /inventory.api:
+    get:
+      operationId: listInventory
+      tags: [Inventory]
+      summary: List inventory items
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of inventory items.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createInventory
+      tags: [Inventory]
+      summary: Create an inventory item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        '201':
+          description: The created inventory item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+  /inventory/{assetNum}.api:
+    get:
+      operationId: getInventory
+      tags: [Inventory]
+      summary: Get inventory item details
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The inventory item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+    put:
+      operationId: updateInventory
+      tags: [Inventory]
+      summary: Update an inventory item
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        '200':
+          description: The updated inventory item.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+    delete:
+      operationId: deleteInventory
+      tags: [Inventory]
+      summary: Delete an inventory item
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The inventory item was deleted.
+  /inventory/{assetNum}/transfer_stock.api:
+    post:
+      operationId: transferInventoryStock
+      tags: [Inventory]
+      summary: Transfer inventory stock between locations
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                from_location_id:
+                  type: integer
+                to_location_id:
+                  type: integer
+                quantity:
+                  type: number
+      responses:
+        '200':
+          description: The stock was transferred.
+  /stock_assets.api:
+    get:
+      operationId: listStockAssets
+      tags: [Inventory]
+      summary: List stock assets
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of stock assets.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createStockAsset
+      tags: [Inventory]
+      summary: Create a stock asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created stock asset.
+  /bundles.api:
+    get:
+      operationId: listBundles
+      tags: [Bundles]
+      summary: List bundles
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of bundles.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bundles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Bundle'
+    post:
+      operationId: createBundle
+      tags: [Bundles]
+      summary: Create a bundle
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Bundle'
+      responses:
+        '201':
+          description: The created bundle.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+  /bundles/{bundleId}.api:
+    get:
+      operationId: getBundle
+      tags: [Bundles]
+      summary: Get bundle details
+      parameters:
+        - name: bundleId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The bundle.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bundle'
+  /customers.api:
+    get:
+      operationId: listCustomers
+      tags: [Customers]
+      summary: List customers
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of customers.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+    post:
+      operationId: createCustomer
+      tags: [Customers]
+      summary: Create a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '201':
+          description: The created customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+  /customers/{customerId}.api:
+    get:
+      operationId: getCustomer
+      tags: [Customers]
+      summary: Get customer details
+      parameters:
+        - $ref: '#/components/parameters/CustomerId'
+      responses:
+        '200':
+          description: The customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+    patch:
+      operationId: updateCustomer
+      tags: [Customers]
+      summary: Update a customer
+      parameters:
+        - $ref: '#/components/parameters/CustomerId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        '200':
+          description: The updated customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+    delete:
+      operationId: deleteCustomer
+      tags: [Customers]
+      summary: Delete a customer
+      parameters:
+        - $ref: '#/components/parameters/CustomerId'
+      responses:
+        '200':
+          description: The customer was deleted.
+  /businesses.api:
+    get:
+      operationId: listBusinesses
+      tags: [Customers]
+      summary: List businesses
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of businesses.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createBusiness
+      tags: [Customers]
+      summary: Create a business
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created business.
+  /contacts.api:
+    get:
+      operationId: listContacts
+      tags: [Customers]
+      summary: List business contacts
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of contacts.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createContact
+      tags: [Customers]
+      summary: Create a business contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created contact.
+  /members.api:
+    get:
+      operationId: listMembers
+      tags: [Members]
+      summary: List members
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of members.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  members:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Member'
+    post:
+      operationId: createMember
+      tags: [Members]
+      summary: Create a member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Member'
+      responses:
+        '201':
+          description: The created member.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+  /members/{userId}.api:
+    get:
+      operationId: getMember
+      tags: [Members]
+      summary: Get member details
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: The member.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+    patch:
+      operationId: updateMember
+      tags: [Members]
+      summary: Update a member
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Member'
+      responses:
+        '200':
+          description: The updated member.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+  /members/{userId}/checked_out_items.api:
+    get:
+      operationId: getMemberCheckedOutItems
+      tags: [Members]
+      summary: List a member's checked-out items
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        '200':
+          description: The items the member currently has checked out.
+          content:
+            application/json:
+              schema:
+                type: object
+  /locations.api:
+    get:
+      operationId: listLocations
+      tags: [Locations]
+      summary: List locations
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of locations.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  locations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Location'
+    post:
+      operationId: createLocation
+      tags: [Locations]
+      summary: Create a location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '201':
+          description: The created location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+  /locations/{locationId}.api:
+    get:
+      operationId: getLocation
+      tags: [Locations]
+      summary: Get location details
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      responses:
+        '200':
+          description: The location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+    patch:
+      operationId: updateLocation
+      tags: [Locations]
+      summary: Update a location
+      parameters:
+        - $ref: '#/components/parameters/LocationId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Location'
+      responses:
+        '200':
+          description: The updated location.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+  /locations/get_quantity_by_location.api:
+    get:
+      operationId: getQuantityByLocation
+      tags: [Availability]
+      summary: Get item quantity by location
+      description: Returns available quantity of items broken down by location.
+      parameters:
+        - name: asset_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Quantity by location.
+          content:
+            application/json:
+              schema:
+                type: object
+  /assets/{assetNum}/booked_dates.api:
+    get:
+      operationId: getAssetBookedDates
+      tags: [Availability]
+      summary: Get booked dates for an asset
+      description: Returns the reserved (booked) date ranges for an asset so integrations can avoid double-booking.
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: Booked date ranges.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  booked_dates:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BookedDate'
+  /inventory/{assetNum}/booked_dates.api:
+    get:
+      operationId: getInventoryBookedDates
+      tags: [Availability]
+      summary: Get booked dates for an inventory item
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: Booked date ranges.
+          content:
+            application/json:
+              schema:
+                type: object
+  /payment_options.api:
+    get:
+      operationId: listPaymentOptions
+      tags: [Payments]
+      summary: List payment options
+      responses:
+        '200':
+          description: Available payment options.
+          content:
+            application/json:
+              schema:
+                type: object
+  /pricing_coupons.api:
+    get:
+      operationId: listCoupons
+      tags: [Payments]
+      summary: List pricing coupons
+      responses:
+        '200':
+          description: Available pricing coupons.
+          content:
+            application/json:
+              schema:
+                type: object
+  /baskets/{orderNum}/charge_pre_payment.api:
+    patch:
+      operationId: chargeOrderPayment
+      tags: [Payments]
+      summary: Charge a payment against an order
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                payment_option_id:
+                  type: integer
+      responses:
+        '200':
+          description: The payment was recorded.
+  /baskets/{orderNum}/charge_damages.api:
+    patch:
+      operationId: chargeOrderDamages
+      tags: [Payments]
+      summary: Add damage charges to an order
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The damage charge was applied.
+  /baskets/{orderNum}/apply_taxes.api:
+    patch:
+      operationId: applyOrderTaxes
+      tags: [Payments]
+      summary: Apply taxes to an order
+      parameters:
+        - $ref: '#/components/parameters/OrderNum'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                custom_tax_ids:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Taxes were applied.
+  /purchase_orders.api:
+    get:
+      operationId: listPurchaseOrders
+      tags: [Purchase Orders]
+      summary: List purchase orders
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of purchase orders.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createPurchaseOrder
+      tags: [Purchase Orders]
+      summary: Create a purchase order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created purchase order.
+  /purchase_orders/{poId}.api:
+    get:
+      operationId: getPurchaseOrder
+      tags: [Purchase Orders]
+      summary: Get purchase order details
+      parameters:
+        - $ref: '#/components/parameters/PoId'
+      responses:
+        '200':
+          description: The purchase order.
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      operationId: updatePurchaseOrder
+      tags: [Purchase Orders]
+      summary: Update a purchase order
+      parameters:
+        - $ref: '#/components/parameters/PoId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The updated purchase order.
+  /purchase_orders/{poId}/receive_items.api:
+    patch:
+      operationId: receivePurchaseOrderItems
+      tags: [Purchase Orders]
+      summary: Receive items against a purchase order
+      parameters:
+        - $ref: '#/components/parameters/PoId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: The items were received.
+  /vendors.api:
+    get:
+      operationId: listVendors
+      tags: [Purchase Orders]
+      summary: List vendors
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of vendors.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createVendor
+      tags: [Purchase Orders]
+      summary: Create a vendor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created vendor.
+  /services.api:
+    get:
+      operationId: listServices
+      tags: [Maintenance]
+      summary: List assets in service
+      parameters:
+        - $ref: '#/components/parameters/Page'
+      responses:
+        '200':
+          description: A page of service records.
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      operationId: createService
+      tags: [Maintenance]
+      summary: Create a service record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created service record.
+  /services/{serviceId}/complete.api:
+    patch:
+      operationId: completeService
+      tags: [Maintenance]
+      summary: Complete a service record
+      parameters:
+        - name: serviceId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The service was completed.
+  /assets/{assetNum}/maintenance.api:
+    patch:
+      operationId: putAssetInMaintenance
+      tags: [Maintenance]
+      summary: Put an asset into maintenance
+      parameters:
+        - $ref: '#/components/parameters/AssetNum'
+      responses:
+        '200':
+          description: The asset was put into maintenance.
+  /tasks.api:
+    post:
+      operationId: createWorkOrder
+      tags: [Maintenance]
+      summary: Create a work order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: The created work order.
+  /tasks/{taskId}.api:
+    get:
+      operationId: getWorkOrder
+      tags: [Maintenance]
+      summary: Get work order details
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The work order.
+          content:
+            application/json:
+              schema:
+                type: object
+  /tasks/{taskId}/start.api:
+    patch:
+      operationId: startWorkOrder
+      tags: [Maintenance]
+      summary: Start a work order
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The work order was started.
+  /tasks/{taskId}/end.api:
+    patch:
+      operationId: endWorkOrder
+      tags: [Maintenance]
+      summary: End a work order
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The work order was ended.
+components:
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: token
+      description: >-
+        Per-company access token generated in Settings (API must be enabled by
+        the account owner). Sent in the `token` HTTP header on every request
+        over HTTPS.
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+    OrderNum:
+      name: orderNum
+      in: path
+      required: true
+      description: The order (basket) number.
+      schema:
+        type: integer
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
+    CustomerId:
+      name: customerId
+      in: path
+      required: true
+      description: The customer ID.
+      schema:
+        type: integer
+    UserId:
+      name: userId
+      in: path
+      required: true
+      description: The member (user) ID.
+      schema:
+        type: integer
+    LocationId:
+      name: locationId
+      in: path
+      required: true
+      description: The location ID.
+      schema:
+        type: integer
+    PoId:
+      name: poId
+      in: path
+      required: true
+      description: The purchase order ID.
+      schema:
+        type: integer
+  responses:
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Too many requests. Honor the Retry-After header before retrying.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+        X-Rate-Limit:
+          schema:
+            type: integer
+          description: The account request quota for the window.
+        X-Rate-Limit-Remaining:
+          schema:
+            type: integer
+          description: Requests remaining in the current window.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    Order:
+      type: object
+      description: A rental order (basket).
+      properties:
+        id:
+          type: integer
+        number:
+          type: integer
+        state:
+          type: string
+          description: Draft, Booked, Rented Out, Returned, etc.
+        customer_id:
+          type: integer
+        starts_on:
+          type: string
+          description: Rental start date (mm/dd/yyyy).
+        ends_on:
+          type: string
+          description: Rental end date (mm/dd/yyyy).
+        location_id:
+          type: integer
+        rental_total:
+          type: number
+    OrderInput:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+        starts_on:
+          type: string
+        ends_on:
+          type: string
+        location_id:
+          type: integer
+    Asset:
+      type: object
+      description: A serialized fixed (rentable) asset.
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        identifier:
+          type: string
+        state:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+    AssetInput:
+      type: object
+      properties:
+        name:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
+    InventoryItem:
+      type: object
+      description: A volatile asset (inventory item) tracked by quantity.
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        group_id:
+          type: integer
+        total_quantity:
+          type: number
+        available_quantity:
+          type: number
+    Bundle:
+      type: object
+      description: A reusable kit of assets and inventory.
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        line_items:
+          type: array
+          items:
+            type: object
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        business_id:
+          type: integer
+    Member:
+      type: object
+      description: A staff user of the rental account.
+      properties:
+        id:
+          type: integer
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        active:
+          type: boolean
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        street:
+          type: string
+        active:
+          type: boolean
+    BookedDate:
+      type: object
+      properties:
+        starts_on:
+          type: string
+        ends_on:
+          type: string
+        order_number:
+          type: integer
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string

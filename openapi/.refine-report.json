@@ -1,0 +1,34 @@
+{
+  "provider": "ezrentout",
+  "sources": [
+    "ezrentout-assets-api-openapi.yml",
+    "ezrentout-availability-api-openapi.yml",
+    "ezrentout-bundles-api-openapi.yml",
+    "ezrentout-customers-api-openapi.yml",
+    "ezrentout-inventory-api-openapi.yml",
+    "ezrentout-locations-api-openapi.yml",
+    "ezrentout-maintenance-api-openapi.yml",
+    "ezrentout-members-api-openapi.yml",
+    "ezrentout-orders-api-openapi.yml",
+    "ezrentout-payments-api-openapi.yml",
+    "ezrentout-purchase-orders-api-openapi.yml"
+  ],
+  "outputs": [
+    "ezrentout-assets-api-openapi.yml",
+    "ezrentout-availability-api-openapi.yml",
+    "ezrentout-bundles-api-openapi.yml",
+    "ezrentout-customers-api-openapi.yml",
+    "ezrentout-inventory-api-openapi.yml",
+    "ezrentout-locations-api-openapi.yml",
+    "ezrentout-maintenance-api-openapi.yml",
+    "ezrentout-members-api-openapi.yml",
+    "ezrentout-orders-api-openapi.yml",
+    "ezrentout-payments-api-openapi.yml",
+    "ezrentout-purchase-orders-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [],
+  "skipped": []
+}
