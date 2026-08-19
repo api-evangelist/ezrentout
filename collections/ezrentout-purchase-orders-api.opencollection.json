@@ -1,0 +1,159 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "EZRentOut Assets Purchase Orders API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "token",
+      "value": "{{token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Purchase Orders",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List purchase orders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/purchase_orders.api",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for paginated list results (default 1)."
+              }
+            ]
+          },
+          "docs": "List purchase orders"
+        },
+        {
+          "info": {
+            "name": "Create a purchase order",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.ezrentout.com/purchase_orders.api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a purchase order"
+        },
+        {
+          "info": {
+            "name": "Get purchase order details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/purchase_orders/:poId.api",
+            "params": [
+              {
+                "name": "poId",
+                "value": "",
+                "type": "path",
+                "description": "The purchase order ID."
+              }
+            ]
+          },
+          "docs": "Get purchase order details"
+        },
+        {
+          "info": {
+            "name": "Update a purchase order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/purchase_orders/:poId.api",
+            "params": [
+              {
+                "name": "poId",
+                "value": "",
+                "type": "path",
+                "description": "The purchase order ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update a purchase order"
+        },
+        {
+          "info": {
+            "name": "Receive items against a purchase order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/purchase_orders/:poId/receive_items.api",
+            "params": [
+              {
+                "name": "poId",
+                "value": "",
+                "type": "path",
+                "description": "The purchase order ID."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Receive items against a purchase order"
+        },
+        {
+          "info": {
+            "name": "List vendors",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/vendors.api",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for paginated list results (default 1)."
+              }
+            ]
+          },
+          "docs": "List vendors"
+        },
+        {
+          "info": {
+            "name": "Create a vendor",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.ezrentout.com/vendors.api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a vendor"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

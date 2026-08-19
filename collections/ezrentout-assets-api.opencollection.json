@@ -1,0 +1,216 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "EZRentOut Assets API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "token",
+      "value": "{{token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Assets",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List assets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/assets.api",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for paginated list results (default 1)."
+              }
+            ]
+          },
+          "docs": "List assets"
+        },
+        {
+          "info": {
+            "name": "Create an asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.ezrentout.com/assets.api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create an asset"
+        },
+        {
+          "info": {
+            "name": "Filter assets",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/assets/filter.api",
+            "params": [
+              {
+                "name": "filter",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "filter_val",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for paginated list results (default 1)."
+              }
+            ]
+          },
+          "docs": "Retrieves rented-out or otherwise filtered assets."
+        },
+        {
+          "info": {
+            "name": "Get asset details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/assets/:assetNum.api",
+            "params": [
+              {
+                "name": "assetNum",
+                "value": "",
+                "type": "path",
+                "description": "The asset / inventory item number."
+              }
+            ]
+          },
+          "docs": "Get asset details"
+        },
+        {
+          "info": {
+            "name": "Update an asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://{subdomain}.ezrentout.com/assets/:assetNum.api",
+            "params": [
+              {
+                "name": "assetNum",
+                "value": "",
+                "type": "path",
+                "description": "The asset / inventory item number."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update an asset"
+        },
+        {
+          "info": {
+            "name": "Delete an asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://{subdomain}.ezrentout.com/assets/:assetNum.api",
+            "params": [
+              {
+                "name": "assetNum",
+                "value": "",
+                "type": "path",
+                "description": "The asset / inventory item number."
+              }
+            ]
+          },
+          "docs": "Delete an asset"
+        },
+        {
+          "info": {
+            "name": "Update asset GPS coordinates",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/assets/:assetNum/gps_coordinates.api",
+            "params": [
+              {
+                "name": "assetNum",
+                "value": "",
+                "type": "path",
+                "description": "The asset / inventory item number."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update asset GPS coordinates"
+        },
+        {
+          "info": {
+            "name": "Retire an asset",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://{subdomain}.ezrentout.com/assets/:assetNum/retire.api",
+            "params": [
+              {
+                "name": "assetNum",
+                "value": "",
+                "type": "path",
+                "description": "The asset / inventory item number."
+              }
+            ]
+          },
+          "docs": "Retire an asset"
+        },
+        {
+          "info": {
+            "name": "Search assets and inventory",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/search.api",
+            "params": [
+              {
+                "name": "search",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for paginated list results (default 1)."
+              }
+            ]
+          },
+          "docs": "Search assets and inventory"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

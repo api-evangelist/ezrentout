@@ -1,0 +1,117 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "EZRentOut Assets Payments API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "token",
+      "value": "{{token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Payments",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List payment options",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/payment_options.api"
+          },
+          "docs": "List payment options"
+        },
+        {
+          "info": {
+            "name": "List pricing coupons",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/pricing_coupons.api"
+          },
+          "docs": "List pricing coupons"
+        },
+        {
+          "info": {
+            "name": "Charge a payment against an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/charge_pre_payment.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Charge a payment against an order"
+        },
+        {
+          "info": {
+            "name": "Add damage charges to an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/charge_damages.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Add damage charges to an order"
+        },
+        {
+          "info": {
+            "name": "Apply taxes to an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/apply_taxes.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Apply taxes to an order"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,166 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "EZRentOut Assets Maintenance API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "token",
+      "value": "{{token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Maintenance",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List assets in service",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/services.api",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for paginated list results (default 1)."
+              }
+            ]
+          },
+          "docs": "List assets in service"
+        },
+        {
+          "info": {
+            "name": "Create a service record",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.ezrentout.com/services.api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a service record"
+        },
+        {
+          "info": {
+            "name": "Complete a service record",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/services/:serviceId/complete.api",
+            "params": [
+              {
+                "name": "serviceId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Complete a service record"
+        },
+        {
+          "info": {
+            "name": "Put an asset into maintenance",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/assets/:assetNum/maintenance.api",
+            "params": [
+              {
+                "name": "assetNum",
+                "value": "",
+                "type": "path",
+                "description": "The asset / inventory item number."
+              }
+            ]
+          },
+          "docs": "Put an asset into maintenance"
+        },
+        {
+          "info": {
+            "name": "Create a work order",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.ezrentout.com/tasks.api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Create a work order"
+        },
+        {
+          "info": {
+            "name": "Get work order details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/tasks/:taskId.api",
+            "params": [
+              {
+                "name": "taskId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Get work order details"
+        },
+        {
+          "info": {
+            "name": "Start a work order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/tasks/:taskId/start.api",
+            "params": [
+              {
+                "name": "taskId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "Start a work order"
+        },
+        {
+          "info": {
+            "name": "End a work order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/tasks/:taskId/end.api",
+            "params": [
+              {
+                "name": "taskId",
+                "value": "",
+                "type": "path"
+              }
+            ]
+          },
+          "docs": "End a work order"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

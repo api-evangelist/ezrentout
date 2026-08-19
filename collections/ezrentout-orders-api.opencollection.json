@@ -1,0 +1,220 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "EZRentOut Assets Orders API",
+    "version": "1.0"
+  },
+  "request": {
+    "auth": {
+      "type": "apikey",
+      "key": "token",
+      "value": "{{token}}",
+      "placement": "header"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Orders",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List orders",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/baskets.api",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Page number for paginated list results (default 1)."
+              }
+            ]
+          },
+          "docs": "Retrieves all orders (baskets). Paginated with the page parameter."
+        },
+        {
+          "info": {
+            "name": "Create an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://{subdomain}.ezrentout.com/baskets.api",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Creates a new draft order (basket)."
+        },
+        {
+          "info": {
+            "name": "Get order details",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ]
+          },
+          "docs": "Get order details"
+        },
+        {
+          "info": {
+            "name": "Update an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Update an order"
+        },
+        {
+          "info": {
+            "name": "Get order history",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/history.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ]
+          },
+          "docs": "Get order history"
+        },
+        {
+          "info": {
+            "name": "Add assets, inventory, or stock to an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/update_basket_from_show.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Adds assets, inventory, stock, or coupons to a draft order."
+        },
+        {
+          "info": {
+            "name": "Book (reserve) an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/reservation.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ]
+          },
+          "docs": "Book (reserve) an order"
+        },
+        {
+          "info": {
+            "name": "Cancel an order reservation",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/cancel_reservation.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ]
+          },
+          "docs": "Cancel an order reservation"
+        },
+        {
+          "info": {
+            "name": "Rent out (check out) an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/checkout.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ]
+          },
+          "docs": "Rent out (check out) an order"
+        },
+        {
+          "info": {
+            "name": "Return (check in) an order",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://{subdomain}.ezrentout.com/baskets/:orderNum/checkin.api",
+            "params": [
+              {
+                "name": "orderNum",
+                "value": "",
+                "type": "path",
+                "description": "The order (basket) number."
+              }
+            ]
+          },
+          "docs": "Return (check in) an order"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}
