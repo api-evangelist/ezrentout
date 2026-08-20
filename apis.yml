@@ -203,6 +203,8 @@ apis:
   humanURL: https://ezo.io/ezrentout/developers/
   baseURL: https://{subdomain}.ezrentout.com
   tags:
+  - Order
+  tags_raw:
   - Orders
   properties:
   - type: OpenAPI
