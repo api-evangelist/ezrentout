@@ -12,6 +12,18 @@ description: EZRentOut is cloud-based equipment rental management software from 
   tenant. The API covers orders (baskets), assets, inventory and stock assets,
   bundles, customers and businesses, members, locations, availability, payments and
   invoicing, purchase orders, and service/work-order maintenance.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: self-serve
