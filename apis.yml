@@ -272,6 +272,9 @@ apis:
   - type: APIReference
     url: https://ezo.io/ezrentout/blog/location-tracking-assets-api/
 common:
+- type: CapabilityMap
+  url: capabilities/ezrentout-capability-edges.yml
+  name: EZRentOut Business Capability Map
 - type: AgenticAccess
   url: agentic-access/ezrentout-agentic-access.yml
 - type: TrustCenter
