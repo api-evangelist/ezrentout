@@ -155,6 +155,8 @@ apis:
   humanURL: https://ezo.io/ezrentout/developers/
   baseURL: https://{subdomain}.ezrentout.com
   tags:
+  - Location
+  tags_raw:
   - Locations
   properties:
   - type: OpenAPI
