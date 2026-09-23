@@ -1,17 +1,7 @@
 {
   "provider": "ezrentout",
   "sources": [
-    "ezrentout-assets-api-openapi.yml",
-    "ezrentout-availability-api-openapi.yml",
-    "ezrentout-bundles-api-openapi.yml",
-    "ezrentout-customers-api-openapi.yml",
-    "ezrentout-inventory-api-openapi.yml",
-    "ezrentout-locations-api-openapi.yml",
-    "ezrentout-maintenance-api-openapi.yml",
-    "ezrentout-members-api-openapi.yml",
-    "ezrentout-orders-api-openapi.yml",
-    "ezrentout-payments-api-openapi.yml",
-    "ezrentout-purchase-orders-api-openapi.yml"
+    "_original/ezrentout-openapi.yml"
   ],
   "outputs": [
     "ezrentout-assets-api-openapi.yml",
@@ -29,6 +19,22 @@
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "ezrentout-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "ezrentout-assets-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-availability-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-bundles-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-customers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-inventory-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-locations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-maintenance-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-members-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-orders-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-payments-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "ezrentout-purchase-orders-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

@@ -1,13 +1,7 @@
-openapi: 3.0.3
+openapi: 3.2.0
 info:
-  title: EZRentOut Assets Customers API
-  description: 'REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory). The API lets paying customers build custom integrations against their own rental account: orders (baskets), fixed assets, inventory and stock assets, bundles, customers and businesses, members, locations, availability, order payments and taxes, purchase orders, and maintenance / work orders.
-
-
-    Every request is scoped to the customer''s own tenant at https://{subdomain}.ezrentout.com and is authenticated with a per-company access token. The token is generated in Settings (API is disabled by default and must be enabled by the account owner) and sent in a `token` HTTP header over HTTPS. Resource endpoints are namespaced with a `.api` suffix. List endpoints are paginated with a `page` query parameter (default 1). Dates use `mm/dd/yyyy` and times use `hh:mm`.
-
-
-    Endpoint paths and the authentication model are grounded in EZRentOut''s public developer documentation (https://ezo.io/ezrentout/developers/). Request and response schemas here are modeled representations - EZRentOut does not publish a machine-readable OpenAPI document, so property sets are illustrative rather than exhaustive.'
+  title: EZRentOut Customers API
+  description: REST API for EZRentOut, the cloud equipment rental management platform from EZO (the company behind EZOfficeInventory).
   version: '1.0'
   contact:
     name: EZO / EZRentOut Support
@@ -169,20 +163,6 @@ paths:
         '201':
           description: The created contact.
 components:
-  schemas:
-    Customer:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        email:
-          type: string
-        active:
-          type: boolean
-        business_id:
-          type: integer
   parameters:
     CustomerId:
       name: customerId
@@ -198,6 +178,20 @@ components:
       schema:
         type: integer
         default: 1
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        business_id:
+          type: integer
   securitySchemes:
     tokenAuth:
       type: apiKey
