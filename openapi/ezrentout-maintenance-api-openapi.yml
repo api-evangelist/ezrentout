@@ -142,13 +142,6 @@ paths:
           description: The work order was ended.
 components:
   parameters:
-    AssetNum:
-      name: assetNum
-      in: path
-      required: true
-      description: The asset / inventory item number.
-      schema:
-        type: integer
     Page:
       name: page
       in: query
@@ -156,6 +149,13 @@ components:
       schema:
         type: integer
         default: 1
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
   securitySchemes:
     tokenAuth:
       type: apiKey

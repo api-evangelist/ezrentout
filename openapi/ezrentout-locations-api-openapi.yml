@@ -95,18 +95,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Location'
 components:
-  schemas:
-    Location:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        street:
-          type: string
-        active:
-          type: boolean
   parameters:
     LocationId:
       name: locationId
@@ -122,6 +110,18 @@ components:
       schema:
         type: integer
         default: 1
+  schemas:
+    Location:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        street:
+          type: string
+        active:
+          type: boolean
   securitySchemes:
     tokenAuth:
       type: apiKey

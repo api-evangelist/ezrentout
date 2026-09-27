@@ -187,23 +187,7 @@ paths:
               schema:
                 type: object
 components:
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
   schemas:
-    AssetInput:
-      type: object
-      properties:
-        name:
-          type: string
-        group_id:
-          type: integer
-        location_id:
-          type: integer
     Error:
       type: object
       properties:
@@ -213,6 +197,15 @@ components:
           type: array
           items:
             type: string
+    AssetInput:
+      type: object
+      properties:
+        name:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
     Asset:
       type: object
       description: A serialized fixed (rentable) asset.
@@ -234,13 +227,6 @@ components:
         longitude:
           type: number
   parameters:
-    AssetNum:
-      name: assetNum
-      in: path
-      required: true
-      description: The asset / inventory item number.
-      schema:
-        type: integer
     Page:
       name: page
       in: query
@@ -248,6 +234,20 @@ components:
       schema:
         type: integer
         default: 1
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     tokenAuth:
       type: apiKey

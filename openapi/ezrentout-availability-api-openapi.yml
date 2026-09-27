@@ -77,14 +77,6 @@ paths:
               schema:
                 type: object
 components:
-  parameters:
-    AssetNum:
-      name: assetNum
-      in: path
-      required: true
-      description: The asset / inventory item number.
-      schema:
-        type: integer
   schemas:
     BookedDate:
       type: object
@@ -95,6 +87,14 @@ components:
           type: string
         order_number:
           type: integer
+  parameters:
+    AssetNum:
+      name: assetNum
+      in: path
+      required: true
+      description: The asset / inventory item number.
+      schema:
+        type: integer
   securitySchemes:
     tokenAuth:
       type: apiKey

@@ -202,48 +202,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Order'
 components:
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    RateLimited:
-      description: Too many requests. Honor the Retry-After header before retrying.
-      headers:
-        Retry-After:
-          schema:
-            type: integer
-          description: Seconds to wait before retrying.
-        X-Rate-Limit:
-          schema:
-            type: integer
-          description: The account request quota for the window.
-        X-Rate-Limit-Remaining:
-          schema:
-            type: integer
-          description: Requests remaining in the current window.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+  parameters:
+    OrderNum:
+      name: orderNum
+      in: path
+      required: true
+      description: The order (basket) number.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
   schemas:
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-        errors:
-          type: array
-          items:
-            type: string
     OrderInput:
       type: object
       properties:
@@ -278,21 +252,47 @@ components:
           type: integer
         rental_total:
           type: number
-  parameters:
-    OrderNum:
-      name: orderNum
-      in: path
-      required: true
-      description: The order (basket) number.
-      schema:
-        type: integer
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+  responses:
+    RateLimited:
+      description: Too many requests. Honor the Retry-After header before retrying.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+        X-Rate-Limit:
+          schema:
+            type: integer
+          description: The account request quota for the window.
+        X-Rate-Limit-Remaining:
+          schema:
+            type: integer
+          description: Requests remaining in the current window.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     tokenAuth:
       type: apiKey

@@ -79,6 +79,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Bundle'
 components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
   schemas:
     Bundle:
       type: object
@@ -92,14 +100,6 @@ components:
           type: array
           items:
             type: object
-  parameters:
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
   securitySchemes:
     tokenAuth:
       type: apiKey

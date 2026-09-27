@@ -163,6 +163,20 @@ paths:
         '201':
           description: The created contact.
 components:
+  schemas:
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        active:
+          type: boolean
+        business_id:
+          type: integer
   parameters:
     CustomerId:
       name: customerId
@@ -178,20 +192,6 @@ components:
       schema:
         type: integer
         default: 1
-  schemas:
-    Customer:
-      type: object
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        email:
-          type: string
-        active:
-          type: boolean
-        business_id:
-          type: integer
   securitySchemes:
     tokenAuth:
       type: apiKey
