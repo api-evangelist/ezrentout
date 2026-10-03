@@ -111,13 +111,6 @@ paths:
                 type: object
 components:
   parameters:
-    UserId:
-      name: userId
-      in: path
-      required: true
-      description: The member (user) ID.
-      schema:
-        type: integer
     Page:
       name: page
       in: query
@@ -125,6 +118,13 @@ components:
       schema:
         type: integer
         default: 1
+    UserId:
+      name: userId
+      in: path
+      required: true
+      description: The member (user) ID.
+      schema:
+        type: integer
   schemas:
     Member:
       type: object

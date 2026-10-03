@@ -187,45 +187,6 @@ paths:
               schema:
                 type: object
 components:
-  schemas:
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-        errors:
-          type: array
-          items:
-            type: string
-    AssetInput:
-      type: object
-      properties:
-        name:
-          type: string
-        group_id:
-          type: integer
-        location_id:
-          type: integer
-    Asset:
-      type: object
-      description: A serialized fixed (rentable) asset.
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        identifier:
-          type: string
-        state:
-          type: string
-        group_id:
-          type: integer
-        location_id:
-          type: integer
-        latitude:
-          type: number
-        longitude:
-          type: number
   parameters:
     Page:
       name: page
@@ -248,6 +209,45 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+    Asset:
+      type: object
+      description: A serialized fixed (rentable) asset.
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        identifier:
+          type: string
+        state:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+    AssetInput:
+      type: object
+      properties:
+        name:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
   securitySchemes:
     tokenAuth:
       type: apiKey

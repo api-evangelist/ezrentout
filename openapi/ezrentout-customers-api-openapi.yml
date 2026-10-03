@@ -163,6 +163,21 @@ paths:
         '201':
           description: The created contact.
 components:
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
+    CustomerId:
+      name: customerId
+      in: path
+      required: true
+      description: The customer ID.
+      schema:
+        type: integer
   schemas:
     Customer:
       type: object
@@ -177,21 +192,6 @@ components:
           type: boolean
         business_id:
           type: integer
-  parameters:
-    CustomerId:
-      name: customerId
-      in: path
-      required: true
-      description: The customer ID.
-      schema:
-        type: integer
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
   securitySchemes:
     tokenAuth:
       type: apiKey

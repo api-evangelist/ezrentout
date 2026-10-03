@@ -203,13 +203,6 @@ paths:
                 $ref: '#/components/schemas/Order'
 components:
   parameters:
-    OrderNum:
-      name: orderNum
-      in: path
-      required: true
-      description: The order (basket) number.
-      schema:
-        type: integer
     Page:
       name: page
       in: query
@@ -217,18 +210,46 @@ components:
       schema:
         type: integer
         default: 1
+    OrderNum:
+      name: orderNum
+      in: path
+      required: true
+      description: The order (basket) number.
+      schema:
+        type: integer
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid access token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Too many requests. Honor the Retry-After header before retrying.
+      headers:
+        Retry-After:
+          schema:
+            type: integer
+          description: Seconds to wait before retrying.
+        X-Rate-Limit:
+          schema:
+            type: integer
+          description: The account request quota for the window.
+        X-Rate-Limit-Remaining:
+          schema:
+            type: integer
+          description: Requests remaining in the current window.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   schemas:
-    OrderInput:
-      type: object
-      properties:
-        customer_id:
-          type: integer
-        starts_on:
-          type: string
-        ends_on:
-          type: string
-        location_id:
-          type: integer
     Order:
       type: object
       description: A rental order (basket).
@@ -261,38 +282,17 @@ components:
           type: array
           items:
             type: string
-  responses:
-    RateLimited:
-      description: Too many requests. Honor the Retry-After header before retrying.
-      headers:
-        Retry-After:
-          schema:
-            type: integer
-          description: Seconds to wait before retrying.
-        X-Rate-Limit:
-          schema:
-            type: integer
-          description: The account request quota for the window.
-        X-Rate-Limit-Remaining:
-          schema:
-            type: integer
-          description: Requests remaining in the current window.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    Unauthorized:
-      description: Missing or invalid access token.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    OrderInput:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+        starts_on:
+          type: string
+        ends_on:
+          type: string
+        location_id:
+          type: integer
   securitySchemes:
     tokenAuth:
       type: apiKey
