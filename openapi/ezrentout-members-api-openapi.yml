@@ -110,21 +110,6 @@ paths:
               schema:
                 type: object
 components:
-  parameters:
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
-    UserId:
-      name: userId
-      in: path
-      required: true
-      description: The member (user) ID.
-      schema:
-        type: integer
   schemas:
     Member:
       type: object
@@ -142,6 +127,21 @@ components:
           type: string
         active:
           type: boolean
+  parameters:
+    UserId:
+      name: userId
+      in: path
+      required: true
+      description: The member (user) ID.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
   securitySchemes:
     tokenAuth:
       type: apiKey

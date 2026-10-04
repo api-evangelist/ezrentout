@@ -188,13 +188,6 @@ paths:
                 type: object
 components:
   parameters:
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
     AssetNum:
       name: assetNum
       in: path
@@ -202,23 +195,23 @@ components:
       description: The asset / inventory item number.
       schema:
         type: integer
-  responses:
-    NotFound:
-      description: The requested resource was not found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
   schemas:
-    Error:
+    AssetInput:
       type: object
       properties:
-        error:
+        name:
           type: string
-        errors:
-          type: array
-          items:
-            type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
     Asset:
       type: object
       description: A serialized fixed (rentable) asset.
@@ -239,15 +232,22 @@ components:
           type: number
         longitude:
           type: number
-    AssetInput:
+    Error:
       type: object
       properties:
-        name:
+        error:
           type: string
-        group_id:
-          type: integer
-        location_id:
-          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+  responses:
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
   securitySchemes:
     tokenAuth:
       type: apiKey

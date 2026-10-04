@@ -96,13 +96,6 @@ paths:
                 $ref: '#/components/schemas/Location'
 components:
   parameters:
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
     LocationId:
       name: locationId
       in: path
@@ -110,6 +103,13 @@ components:
       description: The location ID.
       schema:
         type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
   schemas:
     Location:
       type: object
