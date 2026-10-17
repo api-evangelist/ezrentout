@@ -169,13 +169,6 @@ components:
         available_quantity:
           type: number
   parameters:
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
     AssetNum:
       name: assetNum
       in: path
@@ -183,6 +176,13 @@ components:
       description: The asset / inventory item number.
       schema:
         type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
   securitySchemes:
     tokenAuth:
       type: apiKey

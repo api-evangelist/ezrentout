@@ -203,15 +203,6 @@ components:
         type: integer
         default: 1
   schemas:
-    AssetInput:
-      type: object
-      properties:
-        name:
-          type: string
-        group_id:
-          type: integer
-        location_id:
-          type: integer
     Asset:
       type: object
       description: A serialized fixed (rentable) asset.
@@ -232,6 +223,15 @@ components:
           type: number
         longitude:
           type: number
+    AssetInput:
+      type: object
+      properties:
+        name:
+          type: string
+        group_id:
+          type: integer
+        location_id:
+          type: integer
     Error:
       type: object
       properties:

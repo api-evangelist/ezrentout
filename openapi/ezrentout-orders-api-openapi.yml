@@ -203,26 +203,6 @@ paths:
                 $ref: '#/components/schemas/Order'
 components:
   schemas:
-    OrderInput:
-      type: object
-      properties:
-        customer_id:
-          type: integer
-        starts_on:
-          type: string
-        ends_on:
-          type: string
-        location_id:
-          type: integer
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-        errors:
-          type: array
-          items:
-            type: string
     Order:
       type: object
       description: A rental order (basket).
@@ -246,6 +226,41 @@ components:
           type: integer
         rental_total:
           type: number
+    OrderInput:
+      type: object
+      properties:
+        customer_id:
+          type: integer
+        starts_on:
+          type: string
+        ends_on:
+          type: string
+        location_id:
+          type: integer
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        errors:
+          type: array
+          items:
+            type: string
+  parameters:
+    OrderNum:
+      name: orderNum
+      in: path
+      required: true
+      description: The order (basket) number.
+      schema:
+        type: integer
+    Page:
+      name: page
+      in: query
+      description: Page number for paginated list results (default 1).
+      schema:
+        type: integer
+        default: 1
   responses:
     RateLimited:
       description: Too many requests. Honor the Retry-After header before retrying.
@@ -278,21 +293,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-  parameters:
-    OrderNum:
-      name: orderNum
-      in: path
-      required: true
-      description: The order (basket) number.
-      schema:
-        type: integer
-    Page:
-      name: page
-      in: query
-      description: Page number for paginated list results (default 1).
-      schema:
-        type: integer
-        default: 1
   securitySchemes:
     tokenAuth:
       type: apiKey
